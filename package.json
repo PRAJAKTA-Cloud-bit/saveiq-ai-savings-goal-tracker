@@ -1,0 +1,12 @@
+{
+  "name": "saveiq",
+  "version": "2.0.0",
+  "private": true,
+  "description": "SaveIQ — AI Savings Goal Tracker (single-file HTML5 application + Google Apps Script backend)",
+  "scripts": {
+    "test": "node test/engine.test.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.1"
+  }
+}

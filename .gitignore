@@ -1,0 +1,48 @@
+# ---- secrets (NEVER commit) ----
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+client_secret*.json
+.groq
+
+# ---- dependencies ----
+node_modules/
+bower_components/
+jspm_packages/
+
+# ---- Apps Script local tooling ----
+.clasp.json
+.clasprc.json
+appsscript.json
+dist/
+
+# ---- logs & temp ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pids/
+*.pid
+*.seed
+*.tgz
+.cache/
+.tmp/
+tmp/
+
+# ---- editors / OS ----
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- build output ----
+coverage/
+.nyc_output/
+build/

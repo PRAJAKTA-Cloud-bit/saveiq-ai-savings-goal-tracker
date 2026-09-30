@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#070b12" />
+<title>SaveIQ — AI Savings Goal Tracker</title>
+<meta name="description" content="SaveIQ is an AI-powered savings goal tracker: create goals, track progress, generate Groq AI financial insights and automate deadline reminders." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310b981'/%3E%3Ccircle cx='32' cy='32' r='16' fill='none' stroke='%23052e21' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%23052e21'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#070b12;--panel:rgba(255,255,255,.045);--panel-2:rgba(255,255,255,.028);
+  --stroke:rgba(255,255,255,.09);--stroke-strong:rgba(255,255,255,.16);
+  --text:#e9eef7;--muted:#92a2b9;--faint:#63718a;
+  --brand:#10b981;--brand-2:#22d3ee;--brand-3:#34d399;
+  --violet:#8b5cf6;--amber:#f59e0b;--rose:#f43f5e;--blue:#3b82f6;
+  --grad-brand:linear-gradient(135deg,#10b981 0%,#22d3ee 100%);
+  --grad-warm:linear-gradient(135deg,#f59e0b 0%,#f43f5e 100%);
+  --grad-violet:linear-gradient(135deg,#8b5cf6 0%,#22d3ee 100%);
+  --r-sm:12px;--r-md:16px;--r-lg:22px;--r-xl:28px;
+  --sh-2:0 10px 30px -12px rgba(0,0,0,.7);
+  --sh-3:0 30px 70px -30px rgba(0,0,0,.9);
+  --rail:260px;--ease:cubic-bezier(.22,.61,.36,1);
+  --font:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(900px 600px at 12% -10%,rgba(16,185,129,.20),transparent 60%),
+  radial-gradient(800px 600px at 95% 0%,rgba(34,211,238,.14),transparent 60%),
+  radial-gradient(900px 700px at 70% 110%,rgba(139,92,246,.16),transparent 60%),#070b12}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 100%);
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 100%)}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--brand-2)}
+::selection{background:rgba(16,185,129,.35)}
+:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px;border-radius:6px}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:20px}
+.shell{display:flex;min-height:100dvh;width:100%}
+.rail{display:none;width:var(--rail);flex:0 0 var(--rail);border-right:1px solid var(--stroke);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  padding:22px 16px;position:sticky;top:0;height:100dvh;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:12px;padding:6px 8px}
+.brand-mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto;
+  background:var(--grad-brand);box-shadow:0 8px 24px -8px rgba(16,185,129,.85)}
+.brand-mark svg{width:24px;height:24px}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.brand-text b{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.brand-text span{font-size:11px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav-label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700;padding:0 10px 8px}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 12px;border-radius:var(--r-sm);
+  border:1px solid transparent;background:transparent;cursor:pointer;color:var(--muted);font-weight:600;font-size:14px;
+  transition:background .18s var(--ease),color .18s var(--ease)}
+.nav-item svg{width:19px;height:19px;flex:0 0 auto}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.nav-item.active{color:#eafff7;background:linear-gradient(90deg,rgba(16,185,129,.22),rgba(34,211,238,.10));border-color:rgba(16,185,129,.35)}
+.nav-item .pill{margin-left:auto;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.09);color:var(--muted)}
+.nav-item.active .pill{background:rgba(16,185,129,.25);color:#c7fbe9}
+.rail-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.status-pill{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--stroke);
+  background:var(--panel-2);font-size:12px;color:var(--muted);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex:0 0 auto;box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:pulse 2.4s infinite}
+.dot.warn{background:var(--amber);box-shadow:0 0 0 0 rgba(245,158,11,.6);animation:pulse 2.4s infinite}
+.dot.off{background:var(--faint);animation:none;box-shadow:none}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border-bottom:1px solid var(--stroke);background:rgba(7,11,18,.72);backdrop-filter:blur(18px) saturate(150%)}
+.topbar .title{display:none;flex-direction:column;min-width:0}
+.topbar .title h1{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.topbar .title p{font-size:12px;color:var(--faint);font-weight:500}
+.topbar-search{margin-left:auto;flex:1;max-width:340px;display:none;align-items:center;gap:9px;padding:9px 13px;
+  border-radius:99px;border:1px solid var(--stroke);background:rgba(255,255,255,.04)}
+.topbar-search:focus-within{border-color:rgba(34,211,238,.5);background:rgba(255,255,255,.06)}
+.topbar-search svg{width:16px;height:16px;color:var(--faint);flex:0 0 auto}
+.topbar-search input{flex:1;border:0;background:transparent;outline:none;font-size:13.5px;min-width:0}
+.topbar-actions{display:flex;align-items:center;gap:9px;margin-left:auto}
+.content{padding:18px 16px 108px;flex:1;max-width:1320px;width:100%;margin:0 auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:12px;
+  border:1px solid var(--stroke);background:rgba(255,255,255,.05);cursor:pointer;font-weight:700;font-size:13.5px;
+  transition:transform .15s var(--ease),background .18s var(--ease),border-color .18s var(--ease),box-shadow .18s var(--ease);
+  white-space:nowrap;user-select:none}
+.btn svg{width:16px;height:16px;flex:0 0 auto}
+.btn:hover{background:rgba(255,255,255,.09);border-color:var(--stroke-strong);transform:translateY(-1px)}
+.btn:active{transform:scale(.985)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--grad-brand);border-color:transparent;color:#04261b;box-shadow:0 10px 26px -12px rgba(16,185,129,.95)}
+.btn-violet{background:var(--grad-violet);border-color:transparent;color:#120a2e;box-shadow:0 10px 26px -12px rgba(139,92,246,.9)}
+.btn-danger{background:rgba(244,63,94,.14);border-color:rgba(244,63,94,.4);color:#ffc9d3}
+.btn-danger:hover{background:rgba(244,63,94,.24)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-ghost:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.btn-sm{padding:7px 11px;font-size:12.5px;border-radius:10px}
+.btn-icon{padding:9px;border-radius:11px}
+.btn-icon svg{width:17px;height:17px}
+.btn-block{width:100%}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:11.5px;
+  font-weight:700;border:1px solid transparent;white-space:nowrap}
+.badge svg{width:12px;height:12px}
+.badge-active{background:rgba(59,130,246,.16);color:#a8ccff;border-color:rgba(59,130,246,.32)}
+.badge-completed{background:rgba(16,185,129,.16);color:#9df5d3;border-color:rgba(16,185,129,.34)}
+.badge-overdue{background:rgba(244,63,94,.16);color:#ffc0cb;border-color:rgba(244,63,94,.34)}
+.badge-soon{background:rgba(245,158,11,.16);color:#ffdfa3;border-color:rgba(245,158,11,.34)}
+.badge-muted{background:rgba(255,255,255,.07);color:var(--muted);border-color:var(--stroke)}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:12.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px}
+.field label .req{color:var(--brand-2)}
+.hint{font-size:11.5px;color:var(--faint);font-weight:500;line-height:1.5}
+.input,.select,.textarea{width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--stroke);
+  background:rgba(255,255,255,.04);outline:none;font-size:14px;font-weight:500;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.input:focus,.select:focus,.textarea:focus{border-color:rgba(34,211,238,.55);background:rgba(255,255,255,.06);box-shadow:0 0 0 4px rgba(34,211,238,.10)}
+.input.invalid,.select.invalid{border-color:rgba(244,63,94,.65);box-shadow:0 0 0 4px rgba(244,63,94,.10)}
+.textarea{resize:vertical;min-height:80px;line-height:1.55}
+.select{appearance:none;cursor:pointer;padding-right:36px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2392a2b9' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:15px}
+.select option{background:#101827;color:#e9eef7}
+.err{font-size:11.5px;color:#ffa9b7;font-weight:600;display:none}
+.err.show{display:block}
+.input-wrap{position:relative;display:flex;align-items:center;width:100%}
+.input-wrap .prefix{position:absolute;left:13px;color:var(--faint);font-size:14px;font-weight:700;pointer-events:none}
+.input-wrap .input{padding-left:30px}
+.input-wrap .suffix{position:absolute;right:8px;display:flex;gap:4px}
+.card{border:1px solid var(--stroke);border-radius:var(--r-lg);
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+  box-shadow:var(--sh-2);padding:16px;position:relative;overflow:hidden}
+@media (min-width:640px){.card{padding:20px}}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.card-head h3{font-size:15px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.card-head h3 svg{width:17px;height:17px;color:var(--brand-3);flex:0 0 auto}
+.card-head p{font-size:12px;color:var(--faint);font-weight:500;margin-top:3px}
+.grid{display:grid;gap:14px}
+.g-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-2{grid-template-columns:1fr}
+@media (min-width:768px){.g-2{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}}
+@media (min-width:900px){.g-kpi{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1200px){.g-kpi{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;gap:12px}
+.row-wrap{flex-wrap:wrap}
+.spacer{flex:1}
+.kpi{border:1px solid var(--stroke);border-radius:var(--r-md);padding:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  transition:transform .2s var(--ease),border-color .2s var(--ease)}
+.kpi:hover{transform:translateY(-3px);border-color:var(--stroke-strong)}
+.kpi .k-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.kpi .k-ico{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto}
+.kpi .k-ico svg{width:16px;height:16px}
+.kpi .k-val{font-size:21px;font-weight:800;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .k-lab{font-size:11.5px;color:var(--faint);font-weight:600;margin-top:4px;line-height:1.35}
+.i-emerald{background:rgba(16,185,129,.16);color:#7ff0c8}
+.i-cyan{background:rgba(34,211,238,.16);color:#9ceaf7}
+.i-blue{background:rgba(59,130,246,.16);color:#a8ccff}
+.i-violet{background:rgba(139,92,246,.16);color:#cabaff}
+.i-amber{background:rgba(245,158,11,.16);color:#ffd894}
+.i-rose{background:rgba(244,63,94,.16);color:#ffb3c0}
+.hero{border:1px solid var(--stroke);border-radius:var(--r-xl);padding:18px;
+  background:radial-gradient(700px 320px at 0% 0%,rgba(16,185,129,.20),transparent 65%),
+  radial-gradient(600px 320px at 100% 0%,rgba(139,92,246,.18),transparent 65%),
+  linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));box-shadow:var(--sh-2)}
+@media (min-width:640px){.hero{padding:26px}}
+.hero-grid{display:flex;flex-direction:column;gap:22px}
+@media (min-width:900px){.hero-grid{flex-direction:row;align-items:center;justify-content:space-between;gap:32px}}
+.hero h2{font-size:23px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+@media (min-width:640px){.hero h2{font-size:29px}}
+.hero .sub{color:var(--muted);font-size:13.5px;margin-top:8px;line-height:1.6;max-width:56ch;font-weight:500}
+.hero-stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px}
+.hero-stat b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hero-stat span{font-size:11.5px;color:var(--faint);font-weight:600}
+.rings{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center}
+.ring{position:relative;width:132px;height:132px;flex:0 0 auto}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring circle{fill:none;stroke-linecap:round}
+.ring .track{stroke:rgba(255,255,255,.09)}
+.ring .val{stroke:url(#gradRing);transition:stroke-dashoffset 1s var(--ease)}
+.ring-mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring-mid b{display:block;font-size:25px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ring-mid span{font-size:10.5px;color:var(--faint);font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.ring-sm{width:104px;height:104px}
+.ring-sm .ring-mid b{font-size:20px}
+.bar{height:9px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--grad-brand);width:0;transition:width 1s var(--ease);position:relative;overflow:hidden}
+.bar>i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:shimmer 2.4s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}60%,100%{transform:translateX(200%)}}
+.bar.warn>i{background:var(--grad-warm)}
+.bar.done>i{background:linear-gradient(135deg,#10b981,#34d399)}
+.bar.thin{height:6px}
+.goals{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:760px){.goals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1240px){.goals{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.goal{border:1px solid var(--stroke);border-radius:var(--r-lg);padding:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+  display:flex;flex-direction:column;gap:13px;position:relative;overflow:hidden;
+  transition:transform .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease)}
+.goal:hover{transform:translateY(-4px);border-color:var(--stroke-strong);box-shadow:var(--sh-3)}
+.goal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-brand)}
+.goal.overdue::before{background:var(--grad-warm)}
+.goal.completed::before{background:linear-gradient(90deg,#10b981,#34d399)}
+.goal-top{display:flex;align-items:flex-start;gap:12px}
+.goal-ico{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto;font-size:19px}
+.goal-name{font-size:15.5px;font-weight:800;letter-spacing:-.015em;line-height:1.3;word-break:break-word}
+.goal-meta{font-size:11.5px;color:var(--faint);font-weight:600;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.goal-amt{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.goal-amt b{font-size:19px;font-weight:800;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.goal-amt span{font-size:12.5px;color:var(--faint);font-weight:600}
+.goal-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fact{background:rgba(255,255,255,.035);border:1px solid var(--stroke);border-radius:11px;padding:8px 9px;min-width:0}
+.fact span{display:block;font-size:10px;color:var(--faint);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px}
+.fact b{font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;display:block;overflow-wrap:anywhere}
+.goal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.goal-actions .btn{flex:1;min-width:0}
+.goal-actions .btn.grow-0{flex:0 0 auto}
+.menu-wrap{position:relative}
+.menu{position:absolute;right:0;top:calc(100% + 6px);z-index:60;min-width:196px;border:1px solid var(--stroke-strong);
+  border-radius:14px;padding:6px;background:rgba(16,22,35,.97);box-shadow:var(--sh-3);
+  opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .16s var(--ease),transform .16s var(--ease)}
+.menu.open{opacity:1;transform:none;pointer-events:auto}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 11px;border-radius:10px;
+  border:0;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted)}
+.menu button:hover{background:rgba(255,255,255,.07);color:var(--text)}
+.menu button svg{width:15px;height:15px}
+.menu button.danger{color:#ffa9b7}
+.menu button.danger:hover{background:rgba(244,63,94,.15)}
+.menu .sep{height:1px;background:var(--stroke);margin:5px 6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:7px 13px;border-radius:99px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);
+  cursor:pointer;font-size:12.5px;font-weight:700;color:var(--muted);white-space:nowrap;transition:all .18s var(--ease)}
+.chip:hover{color:var(--text);border-color:var(--stroke-strong)}
+.chip.active{background:linear-gradient(135deg,rgba(16,185,129,.28),rgba(34,211,238,.16));border-color:rgba(16,185,129,.5);color:#d9fff2}
+.chip .n{opacity:.65;margin-left:5px;font-size:11px}
+.empty{text-align:center;padding:44px 20px}
+.empty .art{width:76px;height:76px;margin:0 auto 16px;border-radius:22px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(16,185,129,.18),rgba(139,92,246,.18));border:1px solid var(--stroke)}
+.empty .art svg{width:34px;height:34px;color:var(--brand-3)}
+.empty h3{font-size:16.5px;font-weight:800;margin-bottom:7px}
+.empty p{color:var(--faint);font-size:13px;max-width:48ch;margin:0 auto 18px;line-height:1.6}
+.rem{display:flex;align-items:center;gap:12px;padding:11px;border-radius:13px;border:1px solid var(--stroke);
+  background:rgba(255,255,255,.03);flex-wrap:wrap}
+.rem .ri{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:0 0 auto}
+.rem .ri svg{width:17px;height:17px}
+.rem .rt{min-width:0;flex:1}
+.rem .rt b{display:block;font-size:13.5px;font-weight:700;overflow-wrap:anywhere}
+.rem .rt span{font-size:11.5px;color:var(--faint);font-weight:600}
+.chart-wrap{width:100%;flex:1;display:flex;align-items:center;min-height:220px}
+.chart-wrap svg{display:block;width:100%;height:auto;max-height:360px}
+.card-flex{display:flex;flex-direction:column}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+.legend div{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);font-weight:600}
+.legend i{width:9px;height:9px;border-radius:3px;display:block}
+.bars-list{display:flex;flex-direction:column;gap:13px}
+.bars-list .bl-top{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:700;margin-bottom:6px}
+.bars-list .bl-top span{color:var(--faint);font-weight:600;font-variant-numeric:tabular-nums}
+.insight-hero{border:1px solid var(--stroke);border-radius:var(--r-lg);padding:18px;
+  background:radial-gradient(600px 300px at 100% 0%,rgba(139,92,246,.20),transparent 65%),linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02))}
+.ai-out{border:1px solid var(--stroke);border-radius:var(--r-lg);padding:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));min-height:130px}
+@media (min-width:640px){.ai-out{padding:22px}}
+.ai-out h4{font-size:14px;font-weight:800;margin:20px 0 9px;display:flex;align-items:center;gap:9px;color:#d8fff1}
+.ai-out h4:first-child{margin-top:0}
+.ai-out h4 .num{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:rgba(16,185,129,.18);color:#8af0cb;font-size:11px;flex:0 0 auto}
+.ai-out p{font-size:13.5px;line-height:1.72;color:var(--muted);margin:0 0 10px}
+.ai-out ul{margin:0 0 12px;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.ai-out li{font-size:13.5px;line-height:1.65;color:var(--muted);display:flex;gap:10px}
+.ai-out li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--brand);margin-top:8px;flex:0 0 auto}
+.ai-out strong{color:var(--text);font-weight:800}
+.ai-out code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px;font-size:12.5px}
+.ai-src{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--faint);
+  padding:5px 11px;border-radius:99px;border:1px solid var(--stroke);background:rgba(255,255,255,.03)}
+.skel{height:13px;border-radius:7px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.14),rgba(255,255,255,.06));
+  background-size:200% 100%;animation:sk 1.3s linear infinite;margin-bottom:11px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(4,7,12,.72);backdrop-filter:blur(9px);opacity:0;pointer-events:none;transition:opacity .22s var(--ease)}
+.overlay.open{opacity:1;pointer-events:auto}
+@media (min-width:640px){.overlay{align-items:center;padding:24px}}
+.modal{width:100%;max-width:600px;max-height:92dvh;overflow-y:auto;border:1px solid var(--stroke-strong);
+  border-radius:24px 24px 0 0;background:linear-gradient(180deg,#111a2b,#0b1220);box-shadow:var(--sh-3);
+  transform:translateY(40px);transition:transform .3s var(--ease)}
+@media (min-width:640px){.modal{border-radius:22px;transform:translateY(14px) scale(.97)}}
+.overlay.open .modal{transform:none}
+.modal-head{display:flex;align-items:flex-start;gap:14px;padding:20px 20px 0}
+.modal-head h3{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.modal-head p{font-size:12.5px;color:var(--faint);margin-top:4px;line-height:1.5}
+.modal-body{padding:18px 20px}
+.modal-foot{display:flex;gap:10px;padding:0 20px 22px;flex-wrap:wrap}
+.modal-foot .btn{flex:1}
+.modal-foot .spacer{display:none}
+@media (min-width:520px){.modal-foot .btn{flex:0 0 auto}.modal-foot .spacer{display:block;flex:1}}
+.form-grid{display:grid;gap:13px;grid-template-columns:1fr}
+@media (min-width:520px){.form-grid.two{grid-template-columns:1fr 1fr}.form-grid .span-2{grid-column:1/-1}}
+.preview-box{border:1px dashed rgba(16,185,129,.4);background:rgba(16,185,129,.07);border-radius:14px;padding:13px;
+  display:flex;flex-direction:column;gap:9px}
+.preview-box .pb-row{display:flex;justify-content:space-between;gap:12px;font-size:12.5px}
+.preview-box .pb-row span{color:var(--muted);font-weight:600}
+.preview-box .pb-row b{font-weight:800;font-variant-numeric:tabular-nums}
+.toasts{position:fixed;z-index:400;left:12px;right:12px;top:12px;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+@media (min-width:640px){.toasts{left:auto;right:20px;bottom:20px;top:auto;width:370px}}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 14px;border-radius:15px;border:1px solid var(--stroke-strong);
+  background:rgba(16,22,35,.97);box-shadow:var(--sh-3);pointer-events:auto;opacity:0;transform:translateY(-14px);
+  transition:transform .26s var(--ease),opacity .26s var(--ease)}
+@media (min-width:640px){.toast{transform:translateX(30px)}}
+.toast.in{transform:none;opacity:1}
+.toast .ti{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto}
+.toast .ti svg{width:15px;height:15px}
+.toast b{display:block;font-size:13.5px;font-weight:800;margin-bottom:2px}
+.toast p{font-size:12.5px;color:var(--muted);line-height:1.5;overflow-wrap:anywhere}
+.t-ok .ti{background:rgba(16,185,129,.18);color:#8af0cb}
+.t-err .ti{background:rgba(244,63,94,.18);color:#ffb3c0}
+.t-warn .ti{background:rgba(245,158,11,.18);color:#ffd894}
+.t-info .ti{background:rgba(59,130,246,.18);color:#a8ccff}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:90;display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--stroke);background:rgba(7,11,18,.9);backdrop-filter:blur(18px);
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 4px;border-radius:12px;
+  background:transparent;border:0;cursor:pointer;color:var(--faint);font-size:10.5px;font-weight:700;
+  transition:color .18s var(--ease),background .18s var(--ease)}
+.tab svg{width:20px;height:20px}
+.tab.active{color:#8af0cb;background:rgba(16,185,129,.12)}
+.view{display:none;animation:fadeUp .34s var(--ease)}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sec-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 13px;flex-wrap:wrap}
+.sec-title h2{font-size:16.5px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+.sec-title h2 svg{width:18px;height:18px;color:var(--brand-3);flex:0 0 auto}
+.sec-title p{font-size:12px;color:var(--faint);font-weight:500;margin-top:3px}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--stroke);font-size:13px;flex-wrap:wrap}
+.kv:last-of-type{border-bottom:0;padding-bottom:0}
+.kv span{color:var(--faint);font-weight:600}
+.kv b{font-weight:700;text-align:right;overflow-wrap:anywhere}
+.note{border:1px solid rgba(245,158,11,.32);background:rgba(245,158,11,.08);border-radius:14px;padding:12px 14px;
+  font-size:12.5px;color:#ffdfa3;line-height:1.6;display:flex;gap:10px}
+.note svg{width:17px;height:17px;flex:0 0 auto;margin-top:1px}
+.note.info{border-color:rgba(59,130,246,.32);background:rgba(59,130,246,.08);color:#c3dcff}
+.note.ok{border-color:rgba(16,185,129,.32);background:rgba(16,185,129,.08);color:#b6f5dd}
+.note code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:5px;font-size:12px}
+.mini-label{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:800}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (min-width:1024px){
+  .rail{display:flex}
+  .tabbar{display:none}
+  .content{padding:26px 30px 40px}
+  .topbar{padding:14px 30px}
+  .topbar .title{display:flex}
+  .topbar-search{display:flex;margin-left:0;margin-right:auto}
+  .brand-inline{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="gradRing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+<linearGradient id="gradArea" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#10b981" stop-opacity=".45"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient>
+<linearGradient id="gradLine" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+</defs></svg>
+
+<div class="shell">
+<aside class="rail">
+  <div class="brand">
+    <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#04261b" stroke-width="2.1"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.6" fill="#04261b" stroke="none"/></svg></div>
+    <div class="brand-text"><b>SaveIQ</b><span>AI Goal Tracker</span></div>
+  </div>
+  <nav class="nav" aria-label="Main">
+    <span class="nav-label">Menu</span>
+    <button class="nav-item active" data-nav="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="12" width="7" height="9" rx="1.6"/><rect x="3" y="16" width="7" height="5" rx="1.6"/></svg>Dashboard</button>
+    <button class="nav-item" data-nav="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.3-7-10a7 7 0 1114 0c0 5.7-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg>Goals <span class="pill" id="navGoalCount">0</span></button>
+    <button class="nav-item" data-nav="insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18.5 15.5l.8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8z"/></svg>AI Insights</button>
+    <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
+  </nav>
+  <div class="rail-foot">
+    <div class="status-pill"><span class="dot" id="railDot"></span><span id="railStatus">Storage: Browser</span></div>
+    <div class="status-pill"><span class="dot off" id="aiDot"></span><span id="railAI">AI: Smart local mode</span></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="brand brand-inline" style="padding:0">
+      <div class="brand-mark" style="width:36px;height:36px;border-radius:11px"><svg viewBox="0 0 24 24" fill="none" stroke="#04261b" stroke-width="2.2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.6" fill="#04261b" stroke="none"/></svg></div>
+    </div>
+    <div class="title"><h1 id="pageTitle">Dashboard</h1><p id="pageSub">Financial Discipline Dashboard</p></div>
+    <label class="topbar-search" aria-label="Search goals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
+      <input type="search" id="globalSearch" placeholder="Search goals, purpose…" autocomplete="off" />
+    </label>
+    <div class="topbar-actions">
+      <button class="btn btn-icon btn-ghost" id="btnAudit" title="Run daily audit" aria-label="Run daily audit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+      </button>
+      <button class="btn btn-primary" id="btnNewGoalTop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span>New Goal</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="view active" id="view-dashboard">
+      <div class="hero">
+        <div class="hero-grid">
+          <div>
+            <span class="mini-label" id="greeting">Welcome back</span>
+            <h2 style="margin-top:9px">Your savings, <span style="background:var(--grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent">intelligently tracked</span></h2>
+            <p class="sub">SaveIQ monitors every goal, measures your saving pace and turns your progress into personalised financial guidance — automatically.</p>
+            <div class="hero-stats">
+              <div class="hero-stat"><b id="heroSaved">₹0</b><span>Saved so far</span></div>
+              <div class="hero-stat"><b id="heroTarget">₹0</b><span>Total target</span></div>
+              <div class="hero-stat"><b id="heroWeekly">₹0</b><span>Needed weekly</span></div>
+            </div>
+          </div>
+          <div class="rings">
+            <div class="ring" role="img" aria-label="Overall savings progress">
+              <svg viewBox="0 0 120 120" width="132" height="132">
+                <circle class="track" cx="60" cy="60" r="52" stroke-width="11"/>
+                <circle class="val" id="ringOverall" cx="60" cy="60" r="52" stroke-width="11" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+              </svg>
+              <div class="ring-mid"><b id="ringOverallPct">0%</b><span>Progress</span></div>
+            </div>
+            <div class="ring ring-sm" role="img" aria-label="Savings health score">
+              <svg viewBox="0 0 120 120" width="104" height="104">
+                <circle class="track" cx="60" cy="60" r="52" stroke-width="11"/>
+                <circle class="val" id="ringHealth" cx="60" cy="60" r="52" stroke-width="11" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+              </svg>
+              <div class="ring-mid"><b id="ringHealthVal">0</b><span>Health</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-title"><div><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="12" width="7" height="9" rx="1.6"/><rect x="3" y="16" width="7" height="5" rx="1.6"/></svg>Analytics Overview</h2><p>Live statistics across all your savings goals</p></div>
+      <button class="btn btn-sm" id="btnNewGoalDash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Create goal</button></div>
+
+      <div class="grid g-kpi" id="kpiGrid"></div>
+
+      <div class="sec-title"><div><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 17l5-6 4 3 5-7 4 4"/></svg>Savings Momentum</h2><p>Cumulative savings growth and goal health</p></div></div>
+
+      <div class="grid g-2">
+        <div class="card card-flex">
+          <div class="card-head">
+            <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 17l5-6 4 3 5-7 4 4"/></svg>Cumulative Savings</h3><p>Total amount saved over time</p></div>
+            <span class="badge badge-muted">Last 90 days</span>
+          </div>
+          <div class="chart-wrap" id="areaChart"></div>
+          <div class="legend"><div><i style="background:#10b981"></i>Total saved</div><div><i style="background:rgba(255,255,255,.2)"></i>Goal target</div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg>Goal Progress</h3><p>How far along each goal is</p></div></div>
+          <div class="bars-list" id="goalBars"></div>
+        </div>
+      </div>
+
+      <div class="sec-title">
+        <div><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>Deadline Reminders</h2><p>Automated audit of upcoming and overdue goals</p></div>
+        <button class="btn btn-sm" id="btnRunAudit2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 4v5h-5"/></svg>Run daily audit</button>
+      </div>
+      <div class="card"><div class="stack" id="reminders"></div></div>
+    </section>
+
+    <section class="view" id="view-goals">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="chips" id="statusChips" role="tablist" aria-label="Filter by status"></div>
+        <div class="spacer"></div>
+        <select class="select" id="sortSelect" style="max-width:220px" aria-label="Sort goals">
+          <option value="recent">Sort: Newest first</option>
+          <option value="deadline">Sort: Deadline soonest</option>
+          <option value="progress-desc">Sort: Highest progress</option>
+          <option value="progress-asc">Sort: Lowest progress</option>
+          <option value="amount">Sort: Largest target</option>
+        </select>
+      </div>
+      <div class="goals" id="goalGrid"></div>
+    </section>
+
+    <section class="view" id="view-insights">
+      <div class="insight-hero stack">
+        <div>
+          <span class="mini-label">AI Financial Advisor</span>
+          <h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:8px">Personalised savings guidance</h2>
+          <p class="sub" style="color:var(--muted);font-size:13.5px;margin-top:7px;line-height:1.6">SaveIQ analyses your goal amount, saved balance, remaining target, deadline and purpose — then generates an assessment, a budgeting plan, smart tips and motivation.</p>
+        </div>
+        <div class="field">
+          <label>Select a goal to analyse</label>
+          <div class="chips" id="insightChips"></div>
+        </div>
+        <div class="row row-wrap">
+          <button class="btn btn-violet" id="btnGenerate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Generate AI insights</button>
+          <span class="ai-src" id="aiSourcePill"><span class="dot off"></span> Ready</span>
+        </div>
+      </div>
+
+      <div class="sec-title"><div><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Recommendation Output</h2><p>AI-generated savings assessment and action plan</p></div>
+        <div class="row" id="insightTools" style="display:none">
+          <button class="btn btn-sm" id="btnCopyInsight">Copy</button>
+          <button class="btn btn-sm" id="btnDownloadInsight">Download</button>
+        </div>
+      </div>
+      <div class="ai-out" id="aiOutput"></div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="stack">
+        <div class="card">
+          <div class="card-head"><div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Groq AI Configuration</h3><p>Connect Groq Cloud for live Llama-3.3-70B recommendations</p></div></div>
+          <div class="form-grid two">
+            <div class="field span-2">
+              <label for="setApiKey">Groq API key</label>
+              <div class="input-wrap">
+                <input class="input" type="password" id="setApiKey" placeholder="gsk_…" autocomplete="off" spellcheck="false" />
+                <div class="suffix"><button class="btn btn-sm btn-ghost" id="toggleKey" type="button">Show</button></div>
+              </div>
+              <p class="hint">Stored only in this browser. Get a free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a>. Leave empty to use the built-in Smart Local engine.</p>
+            </div>
+            <div class="field">
+              <label for="setModel">Model</label>
+              <select class="select" id="setModel">
+                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+                <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
+                <option value="openai/gpt-oss-120b">openai/gpt-oss-120b</option>
+                <option value="gemma2-9b-it">gemma2-9b-it</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="setEmail">Default alert email</label>
+              <input class="input" type="email" id="setEmail" placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="field span-2">
+              <div class="row row-wrap">
+                <button class="btn" id="btnTestKey" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Test connection</button>
+                <button class="btn btn-primary" id="btnSaveSettings" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>Save settings</button>
+              </div>
+              <p class="hint" id="keyStatus">No connection test run yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>Storage &amp; Integration</h3><p>Where SaveIQ keeps your goals</p></div><span class="badge badge-muted" id="storageBadge">Browser</span></div>
+          <div class="kv"><span>Active storage engine</span><b id="kvStorage">Browser localStorage</b></div>
+          <div class="kv"><span>Google Apps Script host</span><b id="kvGas">Not detected</b></div>
+          <div class="kv"><span>Goals stored</span><b id="kvCount">0</b></div>
+          <div class="note info" style="margin-top:14px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <div><strong>Run it two ways.</strong> Open this file directly and SaveIQ stores data in your browser. Paste the same file into a Google Apps Script project (as <code>Index.html</code> alongside <code>backend.gs</code>) and it automatically switches to Google Sheets + Gmail + Groq with the daily audit trigger.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Data Management</h3><p>Export, import, back up or reset</p></div></div>
+          <div class="row row-wrap">
+            <button class="btn" id="btnExport">Export JSON</button>
+            <button class="btn" id="btnImport">Import JSON</button>
+            <button class="btn" id="btnDemo">Load demo goals</button>
+            <button class="btn btn-danger" id="btnReset">Reset all data</button>
+            <input type="file" id="fileInput" accept="application/json,.json" hidden />
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h3>About SaveIQ</h3></div></div>
+          <p class="hint" style="font-size:12.5px;line-height:1.75">
+            <strong>SaveIQ — AI Savings Goal Tracker</strong> v2.0 · A single-file fintech application built with HTML5, CSS3 and vanilla JavaScript.
+            Storage: browser localStorage or Google Sheets via Apps Script. AI: Groq Cloud (Llama-3.3-70B) with an offline rule-based fallback engine.
+            Automation: daily audit trigger with Gmail deadline reminders.
+          </p>
+          <div class="note" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg><div>SaveIQ provides educational savings guidance only and is not licensed financial advice.</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</div>
+
+<nav class="tabbar" aria-label="Primary">
+  <button class="tab active" data-nav="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="12" width="7" height="9" rx="1.6"/><rect x="3" y="16" width="7" height="5" rx="1.6"/></svg>Dashboard</button>
+  <button class="tab" data-nav="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.3-7-10a7 7 0 1114 0c0 5.7-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg>Goals</button>
+  <button class="tab" data-nav="insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>AI</button>
+  <button class="tab" data-nav="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
+</nav>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   SaveIQ — AI Savings Goal Tracker · application engine (vanilla JS)
+   Runs standalone (localStorage) or inside Google Apps Script
+   (Google Sheets + Gmail + Groq) with automatic environment detection.
+   ========================================================================= */
+(function () {
+  'use strict';
+
+  var GOALS_KEY = 'saveiq.goals.v2';
+  var SETTINGS_KEY = 'saveiq.settings.v1';
+  var MS_DAY = 86400000;
+  var PURPOSES = [
+    { v: 'Emergency Fund', i: '🛡️', c: 'i-emerald' },
+    { v: 'Laptop / Gadget', i: '💻', c: 'i-cyan' },
+    { v: 'Vacation Plan', i: '✈️', c: 'i-blue' },
+    { v: 'Education', i: '🎓', c: 'i-violet' },
+    { v: 'Vehicle', i: '🚗', c: 'i-amber' },
+    { v: 'Home / Rent', i: '🏠', c: 'i-emerald' },
+    { v: 'Wedding', i: '💍', c: 'i-rose' },
+    { v: 'Investment', i: '📈', c: 'i-cyan' },
+    { v: 'Health', i: '🏥', c: 'i-rose' },
+    { v: 'Gift / Festival', i: '🎁', c: 'i-violet' },
+    { v: 'Other', i: '🎯', c: 'i-emerald' }
+  ];
+
+  /* ------------------------------- helpers ------------------------------- */
+  var INR = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+  function money(n) { return INR.format(Math.round(Number(n) || 0)); }
+  function moneyShort(n) {
+    n = Number(n) || 0; var a = Math.abs(n);
+    if (a >= 1e7) return '₹' + (n / 1e7).toFixed(a >= 1e8 ? 1 : 2).replace(/\.?0+$/, '') + 'Cr';
+    if (a >= 1e5) return '₹' + (n / 1e5).toFixed(a >= 1e6 ? 1 : 2).replace(/\.?0+$/, '') + 'L';
+    if (a >= 1e3) return '₹' + Math.round(n / 1e3) + 'k';
+    return '₹' + Math.round(n);
+  }
+  function uid() { return 'G' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function today0() { var d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+  function parseDay(s) { if (!s) return null; var d = new Date(String(s).slice(0, 10) + 'T00:00:00'); return isNaN(d.getTime()) ? null : d; }
+  function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / MS_DAY); }
+  function toISO(d) { var x = new Date(d); return new Date(x.getTime() - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+  function todayISO() { return toISO(new Date()); }
+  function fmtDate(s) { var d = parseDay(s); return d ? d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; }
+  function purposeMeta(p) {
+    for (var i = 0; i < PURPOSES.length; i++) if (PURPOSES[i].v === p) return PURPOSES[i];
+    return PURPOSES[PURPOSES.length - 1];
+  }
+  function clamp(n, a, b) { return Math.min(b, Math.max(a, n)); }
+  function debounce(fn, ms) { var t; return function () { var a = arguments, s = this; clearTimeout(t); t = setTimeout(function () { fn.apply(s, a); }, ms); }; }
+  function el(id) { return document.getElementById(id); }
+
+  /* ------------------------ tiny markdown renderer ------------------------ */
+  function inlineMd(s) {
+    return esc(s)
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/(^|\s)\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  }
+  function markdown(md) {
+    var lines = String(md || '').replace(/\r/g, '').split('\n');
+    var out = [], listOpen = false;
+    function closeList() { if (listOpen) { out.push('</ul>'); listOpen = false; } }
+    for (var i = 0; i < lines.length; i++) {
+      var raw = lines[i].trim();
+      if (!raw) { closeList(); continue; }
+      var m;
+      if ((m = raw.match(/^#{1,4}\s*(.*)$/))) {
+        closeList();
+        out.push('<h4><span class="num">&#10022;</span>' + inlineMd(m[1].replace(/[*#]/g, '').trim()) + '</h4>');
+      } else if ((m = raw.match(/^[-*•]\s+(.*)$/)) || (m = raw.match(/^\d+[.)]\s+(.*)$/))) {
+        if (!listOpen) { out.push('<ul>'); listOpen = true; }
+        out.push('<li><span>' + inlineMd(m[1]) + '</span></li>');
+      } else {
+        closeList();
+        out.push('<p>' + inlineMd(raw) + '</p>');
+      }
+    }
+    closeList();
+    return out.join('');
+  }
+
+  /* ------------------------------- settings ------------------------------ */
+  var Settings = {
+    data: { apiKey: '', model: 'llama-3.3-70b-versatile', email: '' },
+    load: function () {
+      try {
+        var raw = localStorage.getItem(SETTINGS_KEY);
+        if (raw) this.data = Object.assign(this.data, JSON.parse(raw));
+      } catch (e) { }
+      return this.data;
+    },
+    save: function (patch) {
+      Object.assign(this.data, patch || {});
+      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.data)); } catch (e) { }
+      return this.data;
+    }
+  };
+
+  /* -------------------------------- storage ------------------------------ */
+  var Store = (function () {
+    function hasGAS() { return typeof google !== 'undefined' && google.script && google.script.run; }
+    function readLocal() {
+      try { var r = JSON.parse(localStorage.getItem(GOALS_KEY) || '[]'); return Array.isArray(r) ? r : []; }
+      catch (e) { return []; }
+    }
+    function writeLocal(list) { try { localStorage.setItem(GOALS_KEY, JSON.stringify(list)); } catch (e) { } }
+    function call(fn) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      return new Promise(function (res, rej) {
+        google.script.run
+          .withSuccessHandler(res)
+          .withFailureHandler(function (e) { rej(new Error((e && e.message) || 'Apps Script error')); })[fn].apply(null, args);
+      });
+    }
+    function normalise(list) {
+      return (list || []).map(function (g) {
+        return {
+          id: g.id || g.ID || uid(),
+          name: g.name || g['Goal Name'] || 'Untitled goal',
+          target: Number(g.target || g['Target Amount']) || 0,
+          saved: Number(g.saved || g['Saved Amount']) || 0,
+          deadline: String(g.deadline || g['Deadline'] || '').slice(0, 10),
+          purpose: g.purpose || g['Purpose'] || 'Other',
+          email: g.email || g['Email'] || '',
+          createdAt: g.createdAt || g['Created At'] || new Date().toISOString(),
+          alertSent: !!(g.alertSent === true || g.alertSent === 'TRUE' || g['Alert Sent']),
+          deposits: Array.isArray(g.deposits) ? g.deposits : [],
+          insight: g.insight || null
+        };
+      });
+    }
+    return {
+      mode: hasGAS() ? 'sheets' : 'local',
+      normalise: normalise,
+      list: function () {
+        return hasGAS() ? call('getAllGoals').then(normalise) : Promise.resolve(normalise(readLocal()));
+      },
+      add: function (goal) {
+        if (hasGAS()) return call('addGoal', goal);
+        var l = readLocal(); l.unshift(goal); writeLocal(l); return Promise.resolve(goal);
+      },
+      update: function (id, patch) {
+        if (hasGAS()) return call('updateGoal', id, patch);
+        var l = readLocal(), i;
+        for (i = 0; i < l.length; i++) if (l[i].id === id) { l[i] = Object.assign({}, l[i], patch); break; }
+        writeLocal(l); return Promise.resolve(true);
+      },
+      remove: function (id) {
+        if (hasGAS()) return call('deleteGoal', id);
+        writeLocal(readLocal().filter(function (g) { return g.id !== id; }));
+        return Promise.resolve(true);
+      },
+      replaceAll: function (list) {
+        if (hasGAS()) return call('replaceAllGoals', list);
+        writeLocal(list); return Promise.resolve(true);
+      },
+      sendEmail: function (payload) {
+        if (hasGAS()) return call('sendDeadlineEmail', payload.email, payload.subject, payload.body);
+        return Promise.resolve(null);
+      }
+    };
+  })();
+
+  /* ------------------------------ calculations --------------------------- */
+  var Calc = {
+    compute: function (g) {
+      var target = Number(g.target) || 0, saved = Number(g.saved) || 0;
+      var remaining = Math.max(0, target - saved);
+      var progress = target > 0 ? clamp((saved / target) * 100, 0, 100) : 0;
+      var dl = parseDay(g.deadline);
+      var daysLeft = dl ? daysBetween(today0(), dl) : null;
+      var status = 'active';
+      if (target > 0 && saved >= target) status = 'completed';
+      else if (daysLeft !== null && daysLeft < 0) status = 'overdue';
+      // A required pace only exists when there is a future deadline.
+      var hasFuture = daysLeft !== null && daysLeft > 0;
+      var perDay = (remaining > 0 && hasFuture) ? remaining / daysLeft : 0;
+      var rate = Calc.dailyRate(g);
+      var projectedDays = remaining === 0 ? 0 : (rate > 0 ? Math.ceil(remaining / rate) : Infinity);
+      var projectedDate = isFinite(projectedDays) ? new Date(Date.now() + projectedDays * MS_DAY) : null;
+      var onTrack = null;
+      if (status === 'completed') onTrack = true;
+      else if (daysLeft !== null) onTrack = isFinite(projectedDays) ? projectedDays <= daysLeft : false;
+      return {
+        target: target, saved: saved, remaining: remaining, progress: progress,
+        daysLeft: daysLeft, status: status, perDay: perDay, perWeek: perDay * 7,
+        rate: rate, projectedDays: projectedDays, projectedDate: projectedDate, onTrack: onTrack,
+        dueSoon: status === 'active' && daysLeft !== null && daysLeft <= 7
+      };
+    },
+    dailyRate: function (g) {
+      var list = (g.deposits || []).slice();
+      if (!list.length) {
+        var created = g.createdAt ? new Date(g.createdAt) : new Date();
+        var d0 = Math.max(1, daysBetween(created, new Date()));
+        return (Number(g.saved) || 0) / Math.max(7, d0);
+      }
+      var first = new Date(list[0].at);
+      var total = list.reduce(function (s, d) { return s + (Number(d.amount) || 0); }, 0);
+      return total / Math.max(7, daysBetween(first, new Date()));
+    },
+    health: function (g) {
+      var m = Calc.compute(g);
+      if (m.status === 'completed') return 100;
+      var score = m.progress * 0.45;
+      if (m.daysLeft !== null && m.daysLeft > 0) {
+        if (isFinite(m.projectedDays) && m.projectedDays > 0) score += clamp(m.daysLeft / m.projectedDays, 0, 1) * 30;
+        score += clamp(m.daysLeft / 90, 0, 1) * 10;
+      } else if (m.daysLeft === null) { score += 20; }
+      var recent = (g.deposits || []).filter(function (d) {
+        return Date.now() - new Date(d.at).getTime() < 30 * MS_DAY;
+      }).length;
+      score += clamp(recent / 4, 0, 1) * 15;
+      return Math.round(clamp(score, 0, 100));
+    },
+    timeline: function (goals, days) {
+      days = days || 90;
+      var since = new Date(today0().getTime() - (days - 1) * MS_DAY);
+      var byDay = {}, base = 0, eventCount = 0;
+      goals.forEach(function (g) {
+        var deps = (g.deposits || []);
+        if (!deps.length) {
+          if ((Number(g.saved) || 0) > 0) {
+            byDay[todayISO()] = (byDay[todayISO()] || 0) + (Number(g.saved) || 0);
+            eventCount++;
+          }
+          return;
+        }
+        deps.forEach(function (d) {
+          var at = new Date(d.at), amt = Number(d.amount) || 0;
+          if (at >= since) { var k = toISO(at); byDay[k] = (byDay[k] || 0) + amt; eventCount++; }
+          else base += amt;
+        });
+      });
+      var pts = [], running = base;
+      for (var i = 0; i < days; i++) {
+        var d = new Date(since.getTime() + i * MS_DAY);
+        running += byDay[toISO(d)] || 0;
+        pts.push({ date: d, value: running });
+      }
+      if (!eventCount) {
+        var total = goals.reduce(function (s, g) { return s + (Number(g.saved) || 0); }, 0);
+        pts = pts.map(function (p, i) { return { date: p.date, value: i === pts.length - 1 ? total : 0 }; });
+      }
+      return pts;
+    },
+    stats: function (goals) {
+      var s = { total: goals.length, saved: 0, target: 0, active: 0, completed: 0, overdue: 0, atRisk: 0, dueSoon: 0, healthSum: 0, health: 0, weekly: 0 };
+      goals.forEach(function (g) {
+        var m = Calc.compute(g);
+        s.saved += m.saved; s.target += m.target; s.healthSum += Calc.health(g);
+        if (m.status === 'completed') s.completed++;
+        else if (m.status === 'overdue') s.overdue++;
+        else { s.active++; s.weekly += m.perWeek; if (m.onTrack === false) s.atRisk++; if (m.dueSoon) s.dueSoon++; }
+      });
+      s.progress = s.target > 0 ? clamp((s.saved / s.target) * 100, 0, 100) : 0;
+      s.remaining = Math.max(0, s.target - s.saved);
+      s.health = goals.length ? Math.round(s.healthSum / goals.length) : 0;
+      return s;
+    },
+    audit: function (goals) {
+      var out = [], rank = { overdue: 0, soon: 1, risk: 2 };
+      goals.forEach(function (g) {
+        var m = Calc.compute(g);
+        if (m.status === 'completed') return;
+        if (m.status === 'overdue') out.push({ goal: g, m: m, level: 'overdue' });
+        else if (m.dueSoon) out.push({ goal: g, m: m, level: 'soon' });
+        else if (m.onTrack === false) out.push({ goal: g, m: m, level: 'risk' });
+      });
+      return out.sort(function (a, b) {
+        return rank[a.level] - rank[b.level] || (a.m.daysLeft === null ? 999 : a.m.daysLeft) - (b.m.daysLeft === null ? 999 : b.m.daysLeft);
+      });
+    }
+  };
+
+  /* -------------------------- local AI (offline) ------------------------- */
+  function localInsights(goal) {
+    var m = Calc.compute(goal), health = Calc.health(goal);
+    var name = goal.name, purpose = goal.purpose || 'Other';
+    var o = [];
+    o.push('## Savings Progress Assessment');
+    o.push('You have saved **' + money(m.saved) + '** of your **' + money(m.target) + '** target for *' + name +
+      '* — that is **' + m.progress.toFixed(1) + '% complete**, leaving **' + money(m.remaining) + '** to go.');
+    if (m.status === 'completed') {
+      o.push('🎉 This goal is **fully funded**. Move the balance into a separate account so it is not absorbed into everyday spending, then redirect the same monthly amount into your next goal.');
+    } else if (m.status === 'overdue') {
+      o.push('⚠️ The deadline passed **' + Math.abs(m.daysLeft) + ' day(s) ago** with **' + money(m.remaining) +
+        '** still outstanding. Reset the deadline to a realistic date and restart the plan below rather than abandoning the goal.');
+    } else if (m.daysLeft !== null) {
+      o.push('You have **' + m.daysLeft + ' day(s) left** (about ' + Math.max(1, Math.round(m.daysLeft / 7)) + ' weeks). To finish on time you need **' +
+        money(m.perDay) + ' per day** or **' + money(m.perWeek) + ' per week**.');
+      if (m.onTrack) o.push('At your current pace (~' + money(m.rate) + '/day) you are projected to finish **on or before** the deadline — keep the momentum going.');
+      else if (isFinite(m.projectedDays)) o.push('At your current pace (~' + money(m.rate) + '/day) you would reach the target in **' + m.projectedDays +
+        ' day(s)** — about **' + Math.max(0, m.projectedDays - m.daysLeft) + ' day(s) late**. Raising your weekly contribution closes that gap.');
+      else o.push('No consistent saving pace detected yet. A regular weekly contribution is the single biggest lever you have right now.');
+    } else {
+      o.push('No deadline is set for this goal. Adding one converts an intention into a plan — SaveIQ can then compute your required pace automatically.');
+    }
+    o.push('**Savings health score: ' + health + '/100** — ' + (health >= 75 ? 'excellent financial discipline.' : health >= 50 ? 'solid, with room to tighten up.' : 'needs a structured plan.'));
+
+    o.push('## Budgeting Plan');
+    if (m.status === 'completed') {
+      o.push('- **Protect it:** move the balance into a separate high-interest or fixed-deposit account.');
+      o.push('- **Recycle the habit:** keep contributing the same amount into your next SaveIQ goal.');
+      o.push('- **Reward yourself** with a small, budgeted treat — then get back to saving.');
+    } else {
+      var weekly = m.perWeek > 0 ? m.perWeek : Math.max(1, Math.round(m.remaining / 26));
+      o.push('- **Commit to ' + money(weekly) + ' per week.** Split it into two transfers of ' + money(weekly / 2) +
+        ' — smaller, more frequent deposits are easier to sustain.' +
+        (m.perWeek > 0 ? '' : ' (No future deadline is set, so this spreads the balance over roughly six months — set a deadline for an exact pace.)'));
+      o.push('- **Automate it.** Set a standing instruction on your salary date so saving happens before spending.');
+      o.push('- **Pay yourself first:** move the money out of your spending account the moment income lands.');
+      o.push('- **Use windfalls:** bonuses, tax refunds and cash gifts can close **' + money(m.remaining) + '** far faster than monthly saving alone.');
+      o.push('- **Find ' + money(Math.max(1, Math.round(weekly / 4))) + '/week** by reviewing subscriptions, dining out and impulse purchases.');
+    }
+
+    o.push('## Smart Tips for a ' + purpose + ' Goal');
+    var tips = {
+      'Emergency Fund': ['Target 6 months of essential expenses, not a token amount.', 'Keep it liquid — instant-access savings rather than locked deposits.', 'Top it straight back up after any withdrawal.'],
+      'Laptop / Gadget': ['Prices fall over time — waiting 2–3 months may get a better model for the same money.', 'Refurbished units can cut 20–30% off the target.', 'Set a hard purchase date so the savings window stays finite.'],
+      'Vacation Plan': ['Book flights and stays early — travel is the most volatile line in the budget.', 'Split the target into travel, stay, food and a buffer.', 'Set a separate holiday spending cap so the trip does not undo the goal.'],
+      'Education': ['Check scholarships or employer reimbursement before saving the full amount.', 'Buy used textbooks and use free course material where possible.', 'Plan term-wise milestones instead of one lump sum.'],
+      'Vehicle': ['Include insurance, registration and first-year servicing in the target.', 'A larger down payment lowers your EMI and total interest.', 'Compare loan rates before committing the full amount.'],
+      'Home / Rent': ['Budget for deposit, brokerage and moving costs — typically 2–3 months of rent.', 'Keep the deposit money untouched in a separate account.', 'Negotiate a longer lease to lock in today\'s rent.'],
+      'Wedding': ['Set the total budget first, then allocate across categories.', 'Guest count is the biggest cost driver — decide it early.', 'Book vendors off-season for meaningful discounts.'],
+      'Investment': ['Build a 3-month emergency buffer before investing.', 'Use low-cost index funds for long horizons.', 'Invest on a fixed schedule to average out market swings.'],
+      'Health': ['Check what your insurance already covers before saving.', 'Ask about generic alternatives and package rates.', 'Keep a small contingency on top of the quoted amount.'],
+      'Gift / Festival': ['Set a per-person gift budget and stick to it.', 'Shop early sales to cut costs significantly.', 'Experiences often cost less and mean more than objects.'],
+      'Other': ['Name the goal clearly — vague goals are abandoned fastest.', 'Track progress weekly; what gets measured gets saved.', 'Celebrate each 25% milestone to keep motivation high.']
+    };
+    (tips[purpose] || tips['Other']).forEach(function (t) { o.push('- ' + t); });
+    o.push('- **Milestones:** aim for the 25% / 50% / 75% checkpoints — you are currently at **' + m.progress.toFixed(0) + '%**.');
+
+    o.push('## Motivation');
+    if (m.progress >= 100) o.push('Goal complete. That discipline is exactly what compounds into long-term financial freedom — carry the habit straight into your next target.');
+    else if (m.progress >= 75) o.push('You are in the final stretch at **' + m.progress.toFixed(0) + '% funded**. The last quarter is where most people quit. Do not be most people.');
+    else if (m.progress >= 40) o.push('Nearly halfway. You have already built the hardest part — the habit. Keep the weekly transfers small, boring and automatic.');
+    else if (m.progress > 0) o.push('Every rupee saved so far is proof the system works. Consistency beats intensity — ' + money(m.perWeek) + ' a week is all this needs.');
+    else o.push('The best time to start was earlier; the second best time is now. Make your first transfer today, even a small one — momentum is the goal.');
+    return o.join('\n');
+  }
+
+  /* --------------------------------- Groq -------------------------------- */
+  function buildPrompt(g) {
+    var m = Calc.compute(g);
+    return [
+      'You are SaveIQ, an expert personal-finance coach for Indian savers. Analyse the savings goal below and reply in GitHub-flavoured markdown.',
+      '',
+      'GOAL DATA',
+      '- Goal name: ' + g.name,
+      '- Purpose: ' + (g.purpose || 'Other'),
+      '- Target amount: ' + money(m.target) + ' (INR)',
+      '- Amount saved so far: ' + money(m.saved) + ' (INR)',
+      '- Remaining balance: ' + money(m.remaining) + ' (INR)',
+      '- Deadline: ' + (g.deadline || 'not set'),
+      '- Days remaining: ' + (m.daysLeft === null ? 'no deadline' : m.daysLeft),
+      '- Completion: ' + m.progress.toFixed(1) + '%',
+      '- Status: ' + m.status,
+      '- Observed saving pace: ' + money(m.rate) + ' per day',
+      '- Required pace to hit the deadline: ' + money(m.perDay) + ' per day',
+      '- Savings health score: ' + Calc.health(g) + '/100',
+      '',
+      'Reply with EXACTLY these four markdown headings and nothing else:',
+      '## Savings Progress Assessment   (2-3 sentences using the real numbers)',
+      '## Budgeting Plan   (4-5 bullet points with concrete INR amounts)',
+      '## Smart Tips   (3-4 bullet points tailored to the "' + (g.purpose || 'Other') + '" purpose)',
+      '## Motivation   (1-2 warm, specific sentences)',
+      '',
+      'Rules: use INR amounts, be specific and practical, no preamble, no closing remarks, no disclaimers.'
+    ].join('\n');
+  }
+
+  function groqChat(prompt) {
+    var s = Settings.data;
+    if (!s.apiKey) return Promise.reject(new Error('No Groq API key configured'));
+    return fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + s.apiKey },
+      body: JSON.stringify({
+        model: s.model || 'llama-3.3-70b-versatile',
+        temperature: 0.6,
+        max_tokens: 1000,
+        messages: [
+          { role: 'system', content: 'You are SaveIQ, an expert personal finance coach. Always answer in well-structured markdown using the exact requested headings.' },
+          { role: 'user', content: prompt }
+        ]
+      })
+    }).then(function (r) {
+      return r.text().then(function (t) {
+        if (!r.ok) {
+          var msg = 'Groq request failed (HTTP ' + r.status + ')';
+          try { var j = JSON.parse(t); if (j.error && j.error.message) msg = j.error.message; } catch (e) { }
+          throw new Error(msg);
+        }
+        var data = JSON.parse(t);
+        var txt = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+        if (!txt) throw new Error('Groq returned an empty response');
+        return txt;
+      });
+    });
+  }
+
+  function getAIInsights(goal) {
+    if (Store.mode === 'sheets') {
+      return new Promise(function (res, rej) {
+        google.script.run
+          .withSuccessHandler(function (t) { res({ text: t, source: 'groq-sheets' }); })
+          .withFailureHandler(function (e) { rej(new Error((e && e.message) || 'Apps Script AI error')); })
+          .getAIInsights(goal);
+      });
+    }
+    if (Settings.data.apiKey) {
+      return groqChat(buildPrompt(goal))
+        .then(function (t) { return { text: t, source: 'groq' }; })
+        .catch(function (e) { return { text: localInsights(goal), source: 'local', warning: e.message }; });
+    }
+    return Promise.resolve({ text: localInsights(goal), source: 'local' });
+  }
+
+  /* --------------------------------- state ------------------------------- */
+  var state = {
+    view: 'dashboard', goals: [], filter: 'all', sort: 'recent', search: '',
+    insightGoalId: null, insightText: null, insightSource: null, insightWarning: null,
+    busy: false, seeded: false
+  };
+
+  /* -------------------------------- toasts ------------------------------- */
+  var TOAST_ICONS = {
+    ok: '<path d="M20 6L9 17l-5-5"/>',
+    err: '<path d="M18 6L6 18M6 6l12 12"/>',
+    warn: '<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>'
+  };
+  function toast(kind, title, msg) {
+    var node = document.createElement('div');
+    node.className = 'toast t-' + kind;
+    node.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+      (TOAST_ICONS[kind] || TOAST_ICONS.info) + '</svg></div><div style="min-width:0"><b>' + esc(title) + '</b>' +
+      (msg ? '<p>' + esc(msg) + '</p>' : '') + '</div>';
+    el('toasts').appendChild(node);
+    requestAnimationFrame(function () { node.classList.add('in'); });
+    setTimeout(function () {
+      node.classList.remove('in');
+      setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 320);
+    }, kind === 'err' ? 7000 : 4200);
+  }
+
+  /* --------------------------------- modal ------------------------------- */
+  var modalOnClose = null;
+  function openModal(html, onOpen, onClose) {
+    var m = el('modal');
+    m.innerHTML = html;
+    el('overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    modalOnClose = onClose || null;
+    if (onOpen) onOpen(m);
+    var f = m.querySelector('input:not([type=hidden]),select,textarea,button');
+    if (f) setTimeout(function () { try { f.focus(); } catch (e) { } }, 100);
+  }
+  function closeModal() {
+    el('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    if (modalOnClose) { var f = modalOnClose; modalOnClose = null; setTimeout(f, 220); }
+  }
+  el('overlay').addEventListener('mousedown', function (e) { if (e.target === el('overlay')) closeModal(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && el('overlay').classList.contains('open')) closeModal();
+  });
+  function modalHead(icon, title, sub) {
+    return '<div class="modal-head"><div class="goal-ico ' + icon.c + '">' + icon.i + '</div><div style="min-width:0">' +
+      '<h3 id="modalTitle">' + esc(title) + '</h3>' + (sub ? '<p>' + esc(sub) + '</p>' : '') + '</div></div>';
+  }
+  function confirmDialog(opts) {
+    return new Promise(function (resolve) {
+      openModal(
+        modalHead({ i: '⚠️', c: 'i-rose' }, opts.title || 'Are you sure?', opts.sub || '') +
+        '<div class="modal-body"><p style="font-size:13.5px;color:var(--muted);line-height:1.65">' + esc(opts.body || '') + '</p></div>' +
+        '<div class="modal-foot"><button class="btn" data-x="cancel">Cancel</button><span class="spacer"></span>' +
+        '<button class="btn ' + (opts.danger ? 'btn-danger' : 'btn-primary') + '" data-x="ok">' + esc(opts.ok || 'Confirm') + '</button></div>',
+        function (root) {
+          root.querySelector('[data-x="cancel"]').onclick = function () { closeModal(); resolve(false); };
+          root.querySelector('[data-x="ok"]').onclick = function () { closeModal(); resolve(true); };
+        },
+        function () { resolve(false); }
+      );
+    });
+  }
+
+  /* ------------------------------ goal form ------------------------------ */
+  function goalFormHTML(g) {
+    var opts = PURPOSES.map(function (p) {
+      return '<option value="' + esc(p.v) + '"' + (g && g.purpose === p.v ? ' selected' : '') + '>' + p.i + '  ' + esc(p.v) + '</option>';
+    }).join('');
+    return '<div class="form-grid two">' +
+      '<div class="field span-2"><label for="fName">Goal name <span class="req">*</span></label>' +
+      '<input class="input" id="fName" maxlength="60" placeholder="e.g. Emergency Fund" value="' + esc(g ? g.name : '') + '" />' +
+      '<span class="err" id="eName">Please enter a goal name.</span></div>' +
+      '<div class="field"><label for="fTarget">Target amount (₹) <span class="req">*</span></label>' +
+      '<div class="input-wrap"><span class="prefix">₹</span><input class="input" id="fTarget" type="number" min="1" step="100" inputmode="numeric" placeholder="150000" value="' + (g ? g.target : '') + '" /></div>' +
+      '<span class="err" id="eTarget">Enter an amount greater than ₹0.</span></div>' +
+      '<div class="field"><label for="fSaved">Initial savings (₹)</label>' +
+      '<div class="input-wrap"><span class="prefix">₹</span><input class="input" id="fSaved" type="number" min="0" step="100" inputmode="numeric" placeholder="0" value="' + (g ? g.saved : '') + '" /></div>' +
+      '<span class="err" id="eSaved">Savings cannot exceed the target.</span></div>' +
+      '<div class="field"><label for="fDeadline">Deadline <span class="req">*</span></label>' +
+      '<input class="input" id="fDeadline" type="date" value="' + esc(g ? g.deadline : '') + '" />' +
+      '<span class="err" id="eDeadline">Pick a valid deadline date.</span></div>' +
+      '<div class="field"><label for="fPurpose">Purpose</label>' +
+      '<select class="select" id="fPurpose">' + opts + '</select></div>' +
+      '<div class="field span-2"><label for="fEmail">Email for deadline alerts</label>' +
+      '<input class="input" id="fEmail" type="email" placeholder="you@example.com" value="' + esc(g ? g.email : (Settings.data.email || '')) + '" />' +
+      '<span class="err" id="eEmail">Enter a valid email address.</span>' +
+      '<p class="hint">Used by the daily audit trigger to send reminder emails. Leave blank to skip alerts for this goal.</p></div>' +
+      '<div class="preview-box span-2" id="formPreview"></div>' +
+      '</div>';
+  }
+
+  function bindLivePreview() {
+    function upd() {
+      var t = Number(el('fTarget').value) || 0;
+      var s = Number(el('fSaved').value) || 0;
+      var dl = parseDay(el('fDeadline').value);
+      var rem = Math.max(0, t - s);
+      var pct = t > 0 ? clamp((s / t) * 100, 0, 100) : 0;
+      var dlTxt = '—', paceTxt = '—';
+      if (dl) {
+        var d = daysBetween(today0(), dl);
+        dlTxt = d > 0 ? d + ' days to go' : (d === 0 ? 'Due today' : 'Date has passed');
+        paceTxt = rem === 0 ? 'Already funded 🎉' : (d > 0 ? money(rem / d) + ' / day' : '—');
+      }
+      el('formPreview').innerHTML =
+        '<div class="pb-row"><span>Starting progress</span><b>' + pct.toFixed(1) + '%</b></div>' +
+        '<div class="bar thin"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="pb-row"><span>Remaining to save</span><b>' + money(rem) + '</b></div>' +
+        '<div class="pb-row"><span>Timeline</span><b>' + dlTxt + '</b></div>' +
+        '<div class="pb-row"><span>Required pace</span><b>' + paceTxt + '</b></div>';
+    }
+    ['fTarget', 'fSaved', 'fDeadline'].forEach(function (id) {
+      var n = el(id); if (n) n.addEventListener('input', upd);
+    });
+    upd();
+  }
+
+  function showErr(id, on) {
+    var n = el(id); if (n) n.classList.toggle('show', !!on);
+  }
+
+  function openGoalModal(existing) {
+    var isEdit = !!existing;
+    openModal(
+      modalHead({ i: isEdit ? '✏️' : '🎯', c: 'i-emerald' },
+        isEdit ? 'Edit goal' : 'Create a savings goal',
+        isEdit ? 'Update the details for ' + existing.name : 'Define what you are saving for and by when') +
+      '<div class="modal-body">' + goalFormHTML(existing) + '</div>' +
+      '<div class="modal-foot"><button class="btn" data-x="cancel">Cancel</button><span class="spacer"></span>' +
+      '<button class="btn btn-primary" data-x="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+      (isEdit ? 'Save changes' : 'Create goal') + '</button></div>',
+      function (root) {
+        bindLivePreview();
+        root.querySelector('[data-x="cancel"]').onclick = closeModal;
+        root.querySelector('[data-x="save"]').onclick = function () { submitGoal(existing); };
+      }
+    );
+  }
+
+  function submitGoal(existing) {
+    var name = el('fName').value.trim();
+    var target = Number(el('fTarget').value);
+    var saved = Number(el('fSaved').value || 0);
+    var deadline = el('fDeadline').value;
+    var purpose = el('fPurpose').value;
+    var email = el('fEmail').value.trim();
+    var bad = false;
+
+    function flag(inputId, errId, isBad) {
+      var i = el(inputId); if (i) i.classList.toggle('invalid', !!isBad);
+      showErr(errId, isBad);
+      if (isBad) bad = true;
+    }
+    flag('fName', 'eName', !name);
+    flag('fTarget', 'eTarget', !target || target <= 0);
+    flag('fSaved', 'eSaved', saved < 0 || saved > target);
+    flag('fDeadline', 'eDeadline', !parseDay(deadline));
+    flag('fEmail', 'eEmail', !!(email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)));
+    if (bad) { toast('err', 'Please fix the highlighted fields'); return; }
+
+    if (existing) {
+      Store.update(existing.id, { name: name, target: target, saved: saved, deadline: deadline, purpose: purpose, email: email })
+        .then(function () { closeModal(); return reload(); })
+        .then(function () { toast('ok', 'Goal updated', name + ' has been saved.'); })
+        .catch(function (e) { toast('err', 'Could not update goal', e.message); });
+    } else {
+      var now = new Date().toISOString();
+      var goal = {
+        id: uid(), name: name, target: target, saved: saved, deadline: deadline,
+        purpose: purpose, email: email, createdAt: now, alertSent: false,
+        deposits: saved > 0 ? [{ at: now, amount: saved }] : [], insight: null
+      };
+      Store.add(goal)
+        .then(function () { closeModal(); return reload(); })
+        .then(function () {
+          toast('ok', 'Goal created 🎯', name + ' is now being tracked.');
+          if (saved > 0) toast('info', 'Starting balance recorded', money(saved) + ' added to ' + name + '.');
+        })
+        .catch(function (e) { toast('err', 'Could not create goal', e.message); });
+    }
+  }
+
+  function openSavingsModal(goal) {
+    var m = Calc.compute(goal);
+    var quick = [500, 1000, 2500, 5000].map(function (v) {
+      return '<button type="button" class="chip" data-q="' + v + '">+' + moneyShort(v) + '</button>';
+    }).join('');
+    openModal(
+      modalHead({ i: '💰', c: 'i-cyan' }, 'Add savings', goal.name) +
+      '<div class="modal-body"><div class="stack">' +
+      '<div class="preview-box">' +
+      '<div class="pb-row"><span>Currently saved</span><b>' + money(m.saved) + '</b></div>' +
+      '<div class="pb-row"><span>Still needed</span><b>' + money(m.remaining) + '</b></div>' +
+      '<div class="bar thin"><i style="width:' + m.progress + '%"></i></div>' +
+      '</div>' +
+      '<div class="field"><label for="sAmount">Amount to add (₹) <span class="req">*</span></label>' +
+      '<div class="input-wrap"><span class="prefix">₹</span><input class="input" id="sAmount" type="number" min="1" step="100" inputmode="numeric" placeholder="1000" /></div>' +
+      '<div class="row" style="gap:7px;flex-wrap:wrap;margin-top:4px">' + quick + '</div>' +
+      '<span class="err" id="eAmount">Enter an amount greater than ₹0.</span></div>' +
+      '<p class="hint">Remaining after this deposit: <b id="afterDeposit">' + money(m.remaining) + '</b></p>' +
+      '</div></div>' +
+      '<div class="modal-foot"><button class="btn" data-x="cancel">Cancel</button><span class="spacer"></span>' +
+      '<button class="btn btn-primary" data-x="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add to savings</button></div>',
+      function (root) {
+        var input = el('sAmount');
+        function upd() {
+          var v = Number(input.value) || 0;
+          el('afterDeposit').textContent = money(Math.max(0, m.remaining - v));
+        }
+        input.addEventListener('input', upd);
+        Array.prototype.forEach.call(root.querySelectorAll('[data-q]'), function (b) {
+          b.onclick = function () { input.value = b.getAttribute('data-q'); upd(); input.focus(); };
+        });
+        root.querySelector('[data-x="cancel"]').onclick = closeModal;
+        root.querySelector('[data-x="save"]').onclick = function () {
+          var amt = Number(input.value);
+          if (!amt || amt <= 0) { showErr('eAmount', true); input.classList.add('invalid'); return; }
+          var deposits = (goal.deposits || []).concat([{ at: new Date().toISOString(), amount: amt }]);
+          var newSaved = m.saved + amt;
+          Store.update(goal.id, { saved: newSaved, deposits: deposits, alertSent: false })
+            .then(function () { closeModal(); return reload(); })
+            .then(function () {
+              var after = Calc.compute(Object.assign({}, goal, { saved: newSaved }));
+              if (after.status === 'completed') toast('ok', 'Goal completed 🎉', goal.name + ' is fully funded!');
+              else toast('ok', 'Savings updated', money(amt) + ' added · now ' + after.progress.toFixed(1) + '% complete');
+            })
+            .catch(function (e) { toast('err', 'Could not update savings', e.message); });
+        };
+      }
+    );
+  }
+
+  /* -------------------------------- rendering ---------------------------- */
+  var VIEW_META = {
+    dashboard: ['Dashboard', 'Financial Discipline Dashboard'],
+    goals: ['Goals', 'Create, track and update your savings goals'],
+    insights: ['AI Insights', 'Personalised financial recommendations'],
+    settings: ['Settings', 'Configuration, storage and data']
+  };
+
+  function setView(v) {
+    if (!VIEW_META[v]) v = 'dashboard';
+    state.view = v;
+    Array.prototype.forEach.call(document.querySelectorAll('.view'), function (s) {
+      s.classList.toggle('active', s.id === 'view-' + v);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-nav') === v);
+    });
+    el('pageTitle').textContent = VIEW_META[v][0];
+    el('pageSub').textContent = VIEW_META[v][1];
+    if (v === 'dashboard') { renderAreaChart(state.goals); renderGoalBars(state.goals); renderReminders(); }
+    if (v === 'goals') { renderChips(); renderGoals(); }
+    if (v === 'insights') { renderInsightChips(); renderInsight(); }
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
+  }
+
+  function countUp(node, to, fmt) {
+    var start = null, dur = 850;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min(1, (ts - start) / dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      node.textContent = fmt(to * e);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function renderKPIs(s) {
+    var defs = [
+      { k: 'Total Goals', v: s.total, f: function (n) { return String(Math.round(n)); }, c: 'i-cyan', l: 'goals being tracked',
+        i: '<rect x="3" y="3" width="7" height="9" rx="1.6"/><rect x="14" y="3" width="7" height="5" rx="1.6"/><rect x="14" y="12" width="7" height="9" rx="1.6"/><rect x="3" y="16" width="7" height="5" rx="1.6"/>' },
+      { k: 'Total Saved', v: s.saved, f: moneyShort, c: 'i-emerald', l: 'across all goals',
+        i: '<path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>' },
+      { k: 'Total Target', v: s.target, f: moneyShort, c: 'i-violet', l: 'combined goal value',
+        i: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>' },
+      { k: 'Active Goals', v: s.active, f: function (n) { return String(Math.round(n)); }, c: 'i-blue', l: 'in progress right now',
+        i: '<path d="M3 17l5-6 4 3 5-7 4 4"/>' },
+      { k: 'Completed', v: s.completed, f: function (n) { return String(Math.round(n)); }, c: 'i-emerald', l: 'goals fully funded',
+        i: '<path d="M20 6L9 17l-5-5"/>' },
+      { k: 'Overdue', v: s.overdue, f: function (n) { return String(Math.round(n)); }, c: 'i-rose', l: 'past their deadline',
+        i: '<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/>' }
+    ];
+    var grid = el('kpiGrid');
+    grid.innerHTML = defs.map(function (d, i) {
+      return '<article class="kpi"><div class="k-top"><span class="k-lab" style="margin:0">' + esc(d.k) + '</span>' +
+        '<span class="k-ico ' + d.c + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d.i + '</svg></span></div>' +
+        '<div class="k-val" data-kpi="' + i + '">—</div><div class="k-lab">' + esc(d.l) + '</div></article>';
+    }).join('');
+    defs.forEach(function (d, i) {
+      var node = grid.querySelector('[data-kpi="' + i + '"]');
+      if (node) countUp(node, d.v, d.f);
+    });
+  }
+
+  function renderAreaChart(goals) {
+    var pts = Calc.timeline(goals, 90);
+    var w = 660, h = 230, pad = { t: 18, r: 14, b: 26, l: 14 };
+    var vals = pts.map(function (p) { return p.value; });
+    var peak = Math.max.apply(null, vals.concat([0]));
+    var max = (peak > 0 ? peak : 10000) * 1.12;
+    var iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+    var step = pts.length > 1 ? iw / (pts.length - 1) : iw;
+    function X(i) { return pad.l + i * step; }
+    function Y(v) { return pad.t + ih - (v / max) * ih; }
+    var line = '';
+    for (var i = 0; i < pts.length; i++) line += (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(pts[i].value).toFixed(1) + ' ';
+    var area = line + 'L' + X(pts.length - 1).toFixed(1) + ',' + (pad.t + ih) + ' L' + pad.l + ',' + (pad.t + ih) + ' Z';
+    var gridLines = '', labels = '';
+    for (var g = 0; g <= 4; g++) {
+      var gy = pad.t + (ih / 4) * g;
+      gridLines += '<line x1="' + pad.l + '" y1="' + gy.toFixed(1) + '" x2="' + (w - pad.r) + '" y2="' + gy.toFixed(1) + '" stroke="rgba(255,255,255,.07)" stroke-width="1"/>';
+      labels += '<text x="' + (pad.l + 4) + '" y="' + (gy + 13).toFixed(1) + '" fill="#8b9ab1" font-size="11" font-weight="700" font-family="Manrope,sans-serif">' +
+        moneyShort(max * (1 - g / 4)) + '</text>';
+    }
+    var last = pts[pts.length - 1];
+    var dot = '<circle cx="' + X(pts.length - 1).toFixed(1) + '" cy="' + Y(last.value).toFixed(1) + '" r="4.5" fill="#10b981" stroke="#04261b" stroke-width="2.5"/>';
+    el('areaChart').innerHTML =
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:auto;max-height:260px" role="img" aria-label="Cumulative savings chart">' +
+      '<defs><linearGradient id="aFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity=".42"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="aLine" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs>' +
+      gridLines +
+      '<path d="' + area + '" fill="url(#aFill)"/>' +
+      '<path d="' + line + '" fill="none" stroke="url(#aLine)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+      dot + labels + '</svg>';
+  }
+
+  function renderGoalBars(goals) {
+    var top = goals.slice().sort(function (a, b) { return Calc.compute(b).progress - Calc.compute(a).progress; }).slice(0, 6);
+    var box = el('goalBars');
+    if (!top.length) {
+      box.innerHTML = '<p class="hint">No goals yet — create one to see progress here.</p>';
+      return;
+    }
+    box.innerHTML = top.map(function (g) {
+      var m = Calc.compute(g), p = purposeMeta(g.purpose);
+      var cls = m.status === 'completed' ? 'done' : (m.status === 'overdue' || m.onTrack === false ? 'warn' : '');
+      return '<div><div class="bl-top"><div style="min-width:0;overflow-wrap:anywhere">' + p.i + ' ' + esc(g.name) + '</div>' +
+        '<span>' + m.progress.toFixed(0) + '%</span></div>' +
+        '<div class="bar ' + cls + '"><i style="width:' + m.progress + '%"></i></div>' +
+        '<div class="bl-top" style="margin:6px 0 0"><span>' + money(m.saved) + ' of ' + money(m.target) + '</span>' +
+        '<span>' + (m.status === 'completed' ? 'Funded' : (m.daysLeft === null ? 'No deadline' : (m.daysLeft < 0 ? Math.abs(m.daysLeft) + 'd overdue' : m.daysLeft + 'd left'))) + '</span></div></div>';
+    }).join('');
+  }
+
+  function renderReminders() {
+    var box = el('reminders');
+    var items = Calc.audit(state.goals);
+    if (!items.length) {
+      box.innerHTML = '<div class="note ok" style="border-radius:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+        '<div><strong>All clear.</strong> No overdue goals and nothing falling behind schedule. ' +
+        (state.goals.length ? 'The next automated audit will run on schedule.' : 'Create a goal to start tracking.') + '</div></div>';
+      return;
+    }
+    var conf = {
+      overdue: { c: 'i-rose', ico: '<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/>', txt: 'Overdue' },
+      soon: { c: 'i-amber', ico: '<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/>', txt: 'Deadline approaching' },
+      risk: { c: 'i-blue', ico: '<path d="M3 17l5-6 4 3 5-7 4 4"/>', txt: 'Behind schedule' }
+    };
+    box.innerHTML = items.map(function (it, idx) {
+      var c = conf[it.level], m = it.m, g = it.goal;
+      var detail = it.level === 'overdue'
+        ? Math.abs(m.daysLeft) + ' days past deadline · ' + money(m.remaining) + ' remaining'
+        : it.level === 'soon'
+          ? m.daysLeft + ' days left · need ' + money(m.perDay) + '/day'
+          : 'Projected ' + (isFinite(m.projectedDays) ? m.projectedDays - m.daysLeft + ' days late' : 'off track');
+      return '<div class="rem"><span class="ri ' + c.c + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + c.ico + '</svg></span>' +
+        '<div class="rt"><b>' + esc(g.name) + ' <span class="badge ' + (it.level === 'overdue' ? 'badge-overdue' : it.level === 'soon' ? 'badge-soon' : 'badge-active') + '" style="margin-left:6px">' + c.txt + '</span></b>' +
+        '<span>' + detail + '</span></div>' +
+        '<button class="btn btn-sm" data-email="' + idx + '">' + (g.email ? 'Send reminder' : 'Add email') + '</button></div>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-email]'), function (b) {
+      b.onclick = function () { sendAlert(items[Number(b.getAttribute('data-email'))]); };
+    });
+  }
+
+  function alertBody(g, m) {
+    var lines = [
+      'SaveIQ — Savings Deadline Reminder',
+      '',
+      'Goal: ' + g.name,
+      'Purpose: ' + (g.purpose || 'Other'),
+      'Progress: ' + m.progress.toFixed(1) + '% (' + money(m.saved) + ' of ' + money(m.target) + ')',
+      'Remaining to save: ' + money(m.remaining),
+      'Deadline: ' + fmtDate(g.deadline),
+      'Days remaining: ' + (m.daysLeft === null ? 'not set' : (m.daysLeft < 0 ? Math.abs(m.daysLeft) + ' days overdue' : m.daysLeft + ' days')),
+      'Recommended daily saving: ' + (m.perDay > 0 ? money(m.perDay) : 'not applicable (no future deadline)'),
+      'Recommended weekly saving: ' + (m.perWeek > 0 ? money(m.perWeek) : 'not applicable (no future deadline)'),
+      '',
+      'Log in to SaveIQ to add a contribution and keep your goal on track.'
+    ];
+    return lines.join('\n');
+  }
+
+  function sendAlert(item) {
+    var g = item.goal, m = item.m;
+    if (!g.email) {
+      openGoalModal(g);
+      toast('info', 'Add an alert email', 'Save this goal with an email address to enable reminders.');
+      return;
+    }
+    var subject = 'SaveIQ reminder: ' + g.name + ' — ' + (m.daysLeft < 0 ? Math.abs(m.daysLeft) + ' days overdue' : m.daysLeft + ' days left');
+    var body = alertBody(g, m);
+    if (Store.mode === 'sheets') {
+      Store.sendEmail({ email: g.email, subject: subject, body: body })
+        .then(function () {
+          toast('ok', 'Reminder email sent', 'Delivered to ' + g.email + ' via Gmail.');
+          return Store.update(g.id, { alertSent: true });
+        })
+        .then(reload)
+        .catch(function (e) { toast('err', 'Email failed', e.message); });
+    } else {
+      var url = 'mailto:' + encodeURIComponent(g.email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      window.location.href = url;
+      Store.update(g.id, { alertSent: true }).then(reload);
+      toast('info', 'Email draft opened', 'Connect Apps Script + Gmail for fully automatic sending.');
+    }
+  }
+
+  function renderGoals() {
+    var list = state.goals.slice();
+    var q = state.search.trim().toLowerCase();
+    if (q) list = list.filter(function (g) {
+      return (g.name + ' ' + (g.purpose || '') + ' ' + (g.email || '')).toLowerCase().indexOf(q) > -1;
+    });
+    if (state.filter !== 'all') list = list.filter(function (g) { return Calc.compute(g).status === state.filter; });
+    var sorters = {
+      'recent': function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); },
+      'deadline': function (a, b) { var x = Calc.compute(a).daysLeft, y = Calc.compute(b).daysLeft; return (x === null ? 9e9 : x) - (y === null ? 9e9 : y); },
+      'progress-desc': function (a, b) { return Calc.compute(b).progress - Calc.compute(a).progress; },
+      'progress-asc': function (a, b) { return Calc.compute(a).progress - Calc.compute(b).progress; },
+      'amount': function (a, b) { return b.target - a.target; }
+    };
+    list.sort(sorters[state.sort] || sorters.recent);
+
+    var grid = el('goalGrid');
+    if (!list.length) {
+      grid.innerHTML = '<div class="card" style="grid-column:1/-1"><div class="empty">' +
+        '<div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.3-7-10a7 7 0 1114 0c0 5.7-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg></div>' +
+        '<h3>' + (state.goals.length ? 'No goals match this filter' : 'No savings goals yet') + '</h3>' +
+        '<p>' + (state.goals.length ? 'Try a different status filter or clear your search to see all goals.' : 'Create your first goal and SaveIQ will track progress, measure your pace and generate AI recommendations.') + '</p>' +
+        '<button class="btn btn-primary" id="btnEmptyNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Create a goal</button>' +
+        '<button class="btn" id="btnEmptyDemo" style="margin-left:8px">Load demo goals</button>' +
+        '</div></div>';
+      var b1 = el('btnEmptyNew'), b2 = el('btnEmptyDemo');
+      if (b1) b1.onclick = function () { openGoalModal(null); };
+      if (b2) b2.onclick = loadDemo;
+      return;
+    }
+    grid.innerHTML = list.map(function (g) {
+      var m = Calc.compute(g), p = purposeMeta(g.purpose);
+      var cls = m.status === 'overdue' ? 'overdue' : (m.status === 'completed' ? 'completed' : '');
+      var barCls = m.status === 'completed' ? 'done' : (m.status === 'overdue' || m.onTrack === false ? 'warn' : '');
+      var daysTxt = m.daysLeft === null ? 'No deadline' : (m.daysLeft < 0 ? Math.abs(m.daysLeft) + 'd overdue' : (m.daysLeft === 0 ? 'Due today' : m.daysLeft + 'd left'));
+      return '<article class="goal ' + cls + '">' +
+        '<div class="goal-top">' +
+        '<span class="goal-ico ' + p.c + '">' + p.i + '</span>' +
+        '<div style="min-width:0;flex:1">' +
+        '<div class="goal-name">' + esc(g.name) + '</div>' +
+        '<div class="goal-meta"><span>' + esc(g.purpose || 'Other') + '</span><span>·</span><span>' + fmtDate(g.deadline) + '</span></div>' +
+        '</div>' +
+        '<div class="menu-wrap"><button class="btn btn-icon btn-ghost grow-0" data-menu="' + esc(g.id) + '" aria-label="Goal actions">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.4" fill="currentColor" stroke="none"/></svg>' +
+        '</button><div class="menu" data-menu-panel="' + esc(g.id) + '">' +
+        '<button data-act="insight" data-id="' + esc(g.id) + '">AI insights</button>' +
+        '<button data-act="edit" data-id="' + esc(g.id) + '">Edit goal</button>' +
+        '<button data-act="email" data-id="' + esc(g.id) + '">' + (g.email ? 'Send reminder email' : 'Add alert email') + '</button>' +
+        '<div class="sep"></div>' +
+        '<button class="danger" data-act="delete" data-id="' + esc(g.id) + '">Delete goal</button>' +
+        '</div></div>' +
+        '</div>' +
+        '<div class="row" style="justify-content:space-between">' + statusBadge(m) +
+        '<span class="badge badge-muted">Health ' + Calc.health(g) + '</span></div>' +
+        '<div>' +
+        '<div class="goal-amt"><b>' + money(m.saved) + '</b><span>of ' + money(m.target) + '</span></div>' +
+        '<div class="bar ' + barCls + '" style="margin-top:9px"><i style="width:' + m.progress + '%"></i></div>' +
+        '<div class="goal-meta" style="margin-top:7px"><span>' + m.progress.toFixed(1) + '% complete</span><span>·</span><span>' + daysTxt + '</span></div>' +
+        '</div>' +
+        '<div class="goal-facts">' +
+        '<div class="fact"><span>Remaining</span><b>' + moneyShort(m.remaining) + '</b></div>' +
+        '<div class="fact"><span>Per day</span><b>' + (m.perDay > 0 ? moneyShort(m.perDay) : '—') + '</b></div>' +
+        '<div class="fact"><span>Per week</span><b>' + (m.perWeek > 0 ? moneyShort(m.perWeek) : '—') + '</b></div>' +
+        '</div>' +
+        '<div class="goal-actions">' +
+        '<button class="btn btn-primary" data-act="add" data-id="' + esc(g.id) + '">Add savings</button>' +
+        '<button class="btn" data-act="insight" data-id="' + esc(g.id) + '">AI insights</button>' +
+        '</div>' +
+        '</article>';
+    }).join('');
+  }
+
+  function statusBadge(m) {
+    if (m.status === 'completed') return '<span class="badge badge-completed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Completed</span>';
+    if (m.status === 'overdue') return '<span class="badge badge-overdue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Overdue</span>';
+    if (m.dueSoon) return '<span class="badge badge-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Due in ' + m.daysLeft + 'd</span>';
+    return '<span class="badge badge-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 17l5-6 4 3 5-7 4 4"/></svg>Active</span>';
+  }
+
+  function renderChips() {
+    var all = state.goals.length;
+    var counts = { all: all, active: 0, completed: 0, overdue: 0 };
+    state.goals.forEach(function (g) { counts[Calc.compute(g).status]++; });
+    var defs = [['all', 'All goals'], ['active', 'Active'], ['completed', 'Completed'], ['overdue', 'Overdue']];
+    el('statusChips').innerHTML = defs.map(function (d) {
+      return '<button class="chip' + (state.filter === d[0] ? ' active' : '') + '" data-filter="' + d[0] + '" role="tab">' +
+        d[1] + '<span class="n">' + counts[d[0]] + '</span></button>';
+    }).join('');
+    Array.prototype.forEach.call(el('statusChips').querySelectorAll('[data-filter]'), function (b) {
+      b.onclick = function () { state.filter = b.getAttribute('data-filter'); renderChips(); renderGoals(); };
+    });
+  }
+
+  function renderInsightChips() {
+    var box = el('insightChips');
+    if (!state.goals.length) {
+      box.innerHTML = '<span class="hint">Create a goal first to unlock AI insights.</span>';
+      return;
+    }
+    if (!state.insightGoalId || !state.goals.some(function (g) { return g.id === state.insightGoalId; })) {
+      state.insightGoalId = state.goals[0].id;
+    }
+    box.innerHTML = state.goals.map(function (g) {
+      var p = purposeMeta(g.purpose);
+      return '<button class="chip' + (state.insightGoalId === g.id ? ' active' : '') + '" data-goal="' + esc(g.id) + '">' + p.i + ' ' + esc(g.name) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-goal]'), function (b) {
+      b.onclick = function () {
+        state.insightGoalId = b.getAttribute('data-goal');
+        state.insightText = null; state.insightSource = null; state.insightWarning = null;
+        renderInsightChips(); renderInsight();
+      };
+    });
+  }
+
+  function sourceLabel(src) {
+    if (src === 'groq') return 'Groq · Llama 3.3 70B';
+    if (src === 'groq-sheets') return 'Groq via Apps Script';
+    return 'SaveIQ Smart Local engine';
+  }
+
+  function renderInsight() {
+    var out = el('aiOutput'), tools = el('insightTools'), pill = el('aiSourcePill');
+    if (state.busy) {
+      tools.style.display = 'none';
+      pill.innerHTML = '<span class="dot"></span> Generating…';
+      out.innerHTML = '<span class="mini-label">Analysing goal data</span>' +
+        '<div style="margin-top:16px">' + new Array(9).join('<div class="skel" style="width:' + (55 + Math.random() * 40).toFixed(0) + '%"></div>') + '</div>';
+      return;
+    }
+    if (!state.insightText) {
+      tools.style.display = 'none';
+      pill.innerHTML = '<span class="dot off"></span> Ready';
+      out.innerHTML = '<div class="empty"><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M18.5 15.5l.8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8z"/></svg></div>' +
+        '<h3>No insights generated yet</h3><p>Pick a goal above and hit <strong>Generate AI insights</strong>. SaveIQ will assess your progress, build a budgeting plan and suggest smart next steps.</p></div>';
+      return;
+    }
+    tools.style.display = 'flex';
+    pill.innerHTML = '<span class="dot' + (state.insightSource === 'local' ? ' warn' : '') + '"></span> ' + esc(sourceLabel(state.insightSource));
+    var warn = state.insightWarning
+      ? '<div class="note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>' +
+        '<div>Groq could not be reached (' + esc(state.insightWarning) + '). Showing SaveIQ\'s built-in Smart Local analysis instead.</div></div>'
+      : '';
+    out.innerHTML = warn + markdown(state.insightText);
+  }
+
+  function renderHero(s) {
+    countUp(el('heroSaved'), s.saved, moneyShort);
+    countUp(el('heroTarget'), s.target, moneyShort);
+    countUp(el('heroWeekly'), s.weekly, moneyShort);
+    var c = 2 * Math.PI * 52;
+    el('ringOverall').setAttribute('stroke-dasharray', c.toFixed(1));
+    el('ringOverall').setAttribute('stroke-dashoffset', (c * (1 - s.progress / 100)).toFixed(1));
+    el('ringHealth').setAttribute('stroke-dasharray', c.toFixed(1));
+    el('ringHealth').setAttribute('stroke-dashoffset', (c * (1 - s.health / 100)).toFixed(1));
+    el('ringOverallPct').textContent = s.progress.toFixed(0) + '%';
+    el('ringHealthVal').textContent = String(s.health);
+    var h = new Date().getHours();
+    el('greeting').textContent = (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + ' · ' + new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  function renderStorageInfo() {
+    var sheets = Store.mode === 'sheets';
+    el('railStatus').textContent = 'Storage: ' + (sheets ? 'Google Sheets' : 'Browser');
+    el('railDot').className = 'dot' + (sheets ? '' : ' warn');
+    var hasKey = !!Settings.data.apiKey;
+    el('railAI').textContent = 'AI: ' + (sheets ? 'Groq via Apps Script' : hasKey ? 'Groq · ' + Settings.data.model.split('/').pop() : 'Smart local mode');
+    el('aiDot').className = 'dot' + (sheets || hasKey ? '' : ' off');
+    el('storageBadge').textContent = sheets ? 'Google Sheets' : 'Browser';
+    el('kvStorage').textContent = sheets ? 'Google Sheets (via Apps Script)' : 'Browser localStorage';
+    el('kvGas').textContent = sheets ? 'Connected ✓' : 'Not detected — running standalone';
+    el('kvCount').textContent = String(state.goals.length);
+    el('navGoalCount').textContent = String(state.goals.length);
+  }
+
+  /* --------------------------------- reload ------------------------------ */
+  function reload() {
+    return Store.list().then(function (goals) {
+      state.goals = goals;
+      var s = Calc.stats(goals);
+      renderHero(s);
+      renderKPIs(s);
+      renderStorageInfo();
+      if (state.view === 'dashboard') { renderAreaChart(goals); renderGoalBars(goals); renderReminders(); }
+      renderChips();
+      renderGoals();
+      renderInsightChips();
+      renderInsight();
+      return goals;
+    });
+  }
+
+  /* ------------------------------- demo data ----------------------------- */
+  function daysFromNow(n) { return toISO(new Date(Date.now() + n * MS_DAY)); }
+  function daysAgo(n) { return new Date(Date.now() - n * MS_DAY).toISOString(); }
+  function loadDemo() {
+    var demo = [
+      { name: 'Emergency Fund', target: 300000, saved: 96000, deadline: daysFromNow(210), purpose: 'Emergency Fund', email: Settings.data.email || 'you@example.com',
+        deposits: [{ at: daysAgo(84), amount: 0 }, { at: daysAgo(70), amount: 22000 }, { at: daysAgo(52), amount: 24000 }, { at: daysAgo(34), amount: 20000 }, { at: daysAgo(16), amount: 18000 }, { at: daysAgo(4), amount: 12000 }] },
+      { name: 'MacBook Pro 14"', target: 165000, saved: 121000, deadline: daysFromNow(38), purpose: 'Laptop / Gadget', email: Settings.data.email || 'you@example.com',
+        deposits: [{ at: daysAgo(80), amount: 30000 }, { at: daysAgo(60), amount: 25000 }, { at: daysAgo(40), amount: 28000 }, { at: daysAgo(20), amount: 22000 }, { at: daysAgo(6), amount: 16000 }] },
+      { name: 'Bali Vacation', target: 90000, saved: 21000, deadline: daysFromNow(5), purpose: 'Vacation Plan', email: Settings.data.email || 'you@example.com',
+        deposits: [{ at: daysAgo(50), amount: 8000 }, { at: daysAgo(25), amount: 7000 }, { at: daysAgo(9), amount: 6000 }] },
+      { name: 'Bike Down Payment', target: 60000, saved: 58000, deadline: daysFromNow(12), purpose: 'Vehicle', email: Settings.data.email || 'you@example.com',
+        deposits: [{ at: daysAgo(70), amount: 20000 }, { at: daysAgo(45), amount: 18000 }, { at: daysAgo(22), amount: 15000 }, { at: daysAgo(5), amount: 5000 }] },
+      { name: 'Certification Course', target: 45000, saved: 45000, deadline: daysFromNow(20), purpose: 'Education', email: Settings.data.email || 'you@example.com',
+        deposits: [{ at: daysAgo(75), amount: 15000 }, { at: daysAgo(48), amount: 15000 }, { at: daysAgo(18), amount: 15000 }] },
+      { name: 'Diwali Shopping', target: 25000, saved: 4000, deadline: daysFromNow(-6), purpose: 'Gift / Festival', email: Settings.data.email || 'you@example.com',
+        deposits: [{ at: daysAgo(40), amount: 2500 }, { at: daysAgo(20), amount: 1500 }] }
+    ].map(function (g) {
+      return Object.assign({
+        id: uid(), createdAt: daysAgo(85), alertSent: false, insight: null
+      }, g);
+    });
+    return Store.replaceAll(demo).then(reload).then(function () {
+      toast('ok', 'Demo data loaded', demo.length + ' sample goals created — explore, edit or reset anytime.');
+      setView('dashboard');
+    });
+  }
+
+  /* -------------------------------- exports ------------------------------ */
+  function exportJSON() {
+    var payload = { app: 'SaveIQ', version: 2, exportedAt: new Date().toISOString(), goals: state.goals };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'saveiq-backup-' + todayISO() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    toast('ok', 'Backup exported', state.goals.length + ' goals saved to JSON.');
+  }
+
+  function importJSON(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var parsed = JSON.parse(String(reader.result));
+        var list = Array.isArray(parsed) ? parsed : parsed.goals;
+        if (!Array.isArray(list)) throw new Error('No goals array found in this file');
+        var clean = Store.normalise(list);
+        return Store.replaceAll(clean).then(reload).then(function () {
+          toast('ok', 'Import complete', clean.length + ' goals restored.');
+        });
+      } catch (e) {
+        toast('err', 'Import failed', e.message);
+      }
+    };
+    reader.onerror = function () { toast('err', 'Import failed', 'Could not read that file.'); };
+    reader.readAsText(file);
+  }
+
+  /* ------------------------------ interactions --------------------------- */
+  function runAudit(manual) {
+    var items = Calc.audit(state.goals);
+    if (!state.goals.length) {
+      toast('info', 'Nothing to audit', 'Create a savings goal first.');
+      return;
+    }
+    if (!items.length) {
+      toast('ok', 'Daily audit complete', 'All ' + state.goals.length + ' goals are on track. Email alerts: none required.');
+      return;
+    }
+    var overdue = items.filter(function (i) { return i.level === 'overdue'; }).length;
+    var soon = items.filter(function (i) { return i.level === 'soon'; }).length;
+    var risk = items.filter(function (i) { return i.level === 'risk'; }).length;
+    toast(overdue ? 'warn' : 'info', 'Daily audit complete',
+      items.length + ' goal(s) flagged — ' + overdue + ' overdue, ' + soon + ' due within 7 days, ' + risk + ' behind schedule.');
+    if (manual) {
+      var withEmail = items.filter(function (i) { return i.goal.email; });
+      if (!withEmail.length) return;
+      confirmDialog({
+        title: 'Send ' + withEmail.length + ' reminder email' + (withEmail.length > 1 ? 's' : '') + '?',
+        sub: 'Daily audit trigger · Gmail notification',
+        body: 'SaveIQ will send personalised deadline reminders to: ' + withEmail.map(function (i) { return i.goal.email; }).join(', ') +
+          (Store.mode === 'sheets' ? '' : '  (Desktop mode opens your mail client — connect Apps Script for fully automatic sending.)'),
+        ok: 'Send reminders'
+      }).then(function (yes) {
+        if (!yes) return;
+        withEmail.forEach(function (i) { sendAlert(i); });
+      });
+    }
+  }
+
+  function generateInsight() {
+    var goal = state.goals.filter(function (g) { return g.id === state.insightGoalId; })[0];
+    if (!goal) { toast('info', 'No goal selected', 'Create a goal first to generate insights.'); return; }
+    state.busy = true; state.insightText = null; state.insightWarning = null;
+    renderInsight();
+    var started = Date.now();
+    getAIInsights(goal).then(function (r) {
+      var wait = Math.max(0, 650 - (Date.now() - started));
+      setTimeout(function () {
+        state.busy = false;
+        state.insightText = r.text;
+        state.insightSource = r.source;
+        state.insightWarning = r.warning || null;
+        renderInsight();
+        Store.update(goal.id, { insight: { text: r.text, source: r.source, at: new Date().toISOString() } });
+        toast(r.warning ? 'warn' : 'ok', 'AI insights ready',
+          'Generated for ' + goal.name + ' using ' + sourceLabel(r.source) + '.');
+      }, wait);
+    }).catch(function (e) {
+      state.busy = false;
+      state.insightText = localInsights(goal);
+      state.insightSource = 'local';
+      state.insightWarning = e.message;
+      renderInsight();
+      toast('warn', 'Falling back to local engine', e.message);
+    });
+  }
+
+  function bindEvents() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (b) {
+      b.onclick = function () { setView(b.getAttribute('data-nav')); };
+    });
+    el('btnNewGoalTop').onclick = function () { openGoalModal(null); };
+    el('btnNewGoalDash').onclick = function () { openGoalModal(null); };
+    el('btnAudit').onclick = function () { runAudit(false); };
+    el('btnRunAudit2').onclick = function () { runAudit(true); };
+    el('btnGenerate').onclick = generateInsight;
+
+    el('globalSearch').addEventListener('input', debounce(function (e) {
+      state.search = e.target.value;
+      if (state.view !== 'goals') setView('goals');
+      renderGoals();
+    }, 220));
+    el('sortSelect').onchange = function (e) { state.sort = e.target.value; renderGoals(); };
+
+    el('goalGrid').addEventListener('click', function (e) {
+      var menuBtn = e.target.closest('[data-menu]');
+      if (menuBtn) {
+        var id = menuBtn.getAttribute('data-menu');
+        var panel = document.querySelector('[data-menu-panel="' + id + '"]');
+        var wasOpen = panel.classList.contains('open');
+        Array.prototype.forEach.call(document.querySelectorAll('.menu.open'), function (m) { m.classList.remove('open'); });
+        if (!wasOpen) panel.classList.add('open');
+        e.stopPropagation();
+        return;
+      }
+      var act = e.target.closest('[data-act]');
+      if (!act) return;
+      var gid = act.getAttribute('data-id');
+      var goal = state.goals.filter(function (g) { return g.id === gid; })[0];
+      if (!goal) return;
+      var a = act.getAttribute('data-act');
+      Array.prototype.forEach.call(document.querySelectorAll('.menu.open'), function (m) { m.classList.remove('open'); });
+      if (a === 'add') openSavingsModal(goal);
+      else if (a === 'insight') {
+        state.insightGoalId = goal.id; state.insightText = goal.insight ? goal.insight.text : null;
+        state.insightSource = goal.insight ? goal.insight.source : null; state.insightWarning = null;
+        setView('insights'); renderInsightChips(); renderInsight();
+        if (!goal.insight) generateInsight();
+      } else if (a === 'edit') openGoalModal(goal);
+      else if (a === 'email') sendAlert({ goal: goal, m: Calc.compute(goal), level: Calc.compute(goal).status });
+      else if (a === 'delete') {
+        confirmDialog({
+          title: 'Delete "' + goal.name + '"?', sub: 'This cannot be undone',
+          body: 'The goal and its savings history (' + money(goal.saved) + ') will be permanently removed.',
+          ok: 'Delete goal', danger: true
+        }).then(function (yes) {
+          if (!yes) return;
+          Store.remove(goal.id).then(reload).then(function () { toast('ok', 'Goal deleted', goal.name + ' has been removed.'); });
+        });
+      }
+    });
+    document.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('.menu.open'), function (m) { m.classList.remove('open'); });
+    });
+
+    el('btnCopyInsight').onclick = function () {
+      if (!state.insightText) return;
+      var done = function () { toast('ok', 'Copied', 'Insight copied to your clipboard.'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(state.insightText).then(done, function () { toast('err', 'Copy failed'); });
+      else { toast('warn', 'Clipboard unavailable', 'Select the text manually to copy.'); }
+    };
+    el('btnDownloadInsight').onclick = function () {
+      if (!state.insightText) return;
+      var goal = state.goals.filter(function (g) { return g.id === state.insightGoalId; })[0];
+      var name = goal ? goal.name : 'saveiq';
+      var blob = new Blob(['# SaveIQ AI Insight — ' + name + '\n\n' + state.insightText + '\n'], { type: 'text/markdown' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'saveiq-insight-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.md';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      toast('ok', 'Insight downloaded', 'Saved as a Markdown file.');
+    };
+
+    el('toggleKey').onclick = function () {
+      var i = el('setApiKey');
+      i.type = i.type === 'password' ? 'text' : 'password';
+      el('toggleKey').textContent = i.type === 'password' ? 'Show' : 'Hide';
+    };
+    el('btnSaveSettings').onclick = function () {
+      Settings.save({ apiKey: el('setApiKey').value.trim(), model: el('setModel').value, email: el('setEmail').value.trim() });
+      renderStorageInfo();
+      toast('ok', 'Settings saved', Settings.data.apiKey ? 'Groq AI is now enabled.' : 'Running on the built-in Smart Local engine.');
+    };
+    el('btnTestKey').onclick = function () {
+      var key = el('setApiKey').value.trim();
+      var status = el('keyStatus');
+      if (!key) { status.textContent = 'Enter an API key first — or leave it blank to use the local engine.'; toast('info', 'No API key', 'SaveIQ works without one.'); return; }
+      Settings.save({ apiKey: key, model: el('setModel').value, email: el('setEmail').value.trim() });
+      status.textContent = 'Testing connection to Groq…';
+      groqChat('Reply with exactly: OK')
+        .then(function () { status.textContent = '✓ Connected to Groq successfully.'; renderStorageInfo(); toast('ok', 'Groq connected', 'Live AI insights are now enabled.'); })
+        .catch(function (e) { status.textContent = '✗ Connection failed: ' + e.message; toast('err', 'Groq connection failed', e.message); });
+    };
+
+    el('btnExport').onclick = exportJSON;
+    el('btnImport').onclick = function () { el('fileInput').click(); };
+    el('fileInput').onchange = function (e) { if (e.target.files && e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ''; };
+    el('btnDemo').onclick = function () {
+      confirmDialog({
+        title: state.goals.length ? 'Replace current goals with demo data?' : 'Load demo goals?',
+        body: state.goals.length ? 'Your ' + state.goals.length + ' existing goal(s) will be replaced by 6 sample goals. Export a backup first if you want to keep them.' : 'This creates 6 realistic sample goals so you can explore every SaveIQ feature.',
+        ok: 'Load demo'
+      }).then(function (yes) { if (yes) loadDemo(); });
+    };
+    el('btnReset').onclick = function () {
+      confirmDialog({
+        title: 'Reset all SaveIQ data?', sub: 'This cannot be undone',
+        body: 'All goals, savings history and saved AI insights will be permanently deleted from this ' + (Store.mode === 'sheets' ? 'Google Sheet' : 'browser') + '.',
+        ok: 'Delete everything', danger: true
+      }).then(function (yes) {
+        if (!yes) return;
+        Store.replaceAll([]).then(function () {
+          state.insightText = null; state.insightSource = null;
+          return reload();
+        }).then(function () { toast('ok', 'All data reset', 'SaveIQ is back to a clean slate.'); });
+      });
+    };
+  }
+
+  /* ---------------------------------- init ------------------------------- */
+  function init() {
+    Settings.load();
+    el('setApiKey').value = Settings.data.apiKey || '';
+    el('setModel').value = Settings.data.model || 'llama-3.3-70b-versatile';
+    el('setEmail').value = Settings.data.email || '';
+    if (Settings.data.apiKey) el('keyStatus').textContent = 'A key is saved. Use “Test connection” to verify it.';
+    bindEvents();
+    reload().then(function (goals) {
+      if (!goals.length) {
+        toast('info', 'Welcome to SaveIQ 👋', 'Create your first savings goal, or load demo goals from Settings to explore.');
+      }
+    }).catch(function (e) {
+      toast('err', 'Could not load goals', e.message);
+    });
+  }
+
+  /* ------------------------- public API (console/dev) -------------------- */
+  window.SaveIQ = {
+    addGoal: function (goal) {
+      var g = Store.normalise([Object.assign({
+        id: uid(), createdAt: new Date().toISOString(), alertSent: false,
+        deposits: [], insight: null
+      }, goal)])[0];
+      if (g.saved > 0 && !g.deposits.length) g.deposits = [{ at: g.createdAt, amount: g.saved }];
+      return Store.add(g).then(reload);
+    },
+    getAllGoals: function () { return Store.list(); },
+    updateSavings: function (id, amount) {
+      var g = state.goals.filter(function (x) { return x.id === id; })[0];
+      if (!g) return Promise.reject(new Error('Goal not found: ' + id));
+      var deposits = (g.deposits || []).concat([{ at: new Date().toISOString(), amount: amount }]);
+      return Store.update(id, { saved: (Number(g.saved) || 0) + Number(amount), deposits: deposits }).then(reload);
+    },
+    deleteGoal: function (id) { return Store.remove(id).then(reload); },
+    getDashboardStats: function () { return Calc.stats(state.goals); },
+    getAIInsights: getAIInsights,
+    dailyAuditTrigger: function () { var items = Calc.audit(state.goals); runAudit(false); return items; },
+    computeGoal: Calc.compute,
+    localInsights: function (id) {
+      var g = state.goals.filter(function (x) { return x.id === id; })[0];
+      return g ? localInsights(g) : null;
+    },
+    state: state,
+    reload: reload
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
